@@ -1,0 +1,19 @@
+#######################################
+# The list of libraries we are building seperated by spaces.
+# The 'lib_' indicates that these build products will be installed
+# in the $(libdir) directory. For example /usr/lib
+lib_LTLIBRARIES = libhomerunner.la
+
+#######################################
+# Build information for each library
+
+# Sources for homerunner
+libhomerunner_la_SOURCES = homerunner_plugin.c
+
+# Linker options libTestProgram
+libhomerunner_la_LDFLAGS = $(GLIB_LIBS) $(TOTEM_LIBS) $(LIBPEAS_LIBS)
+
+# Compiler options. Here we are adding the include directory
+# to be searched for headers included in the source code.
+libhomerunner_la_CFLAGS = -I$(top_srcdir)/include $(GLIB_CFLAGS) $(TOTEM_CFLAGS) $(LIBPEAS_CFLAGS)
+
