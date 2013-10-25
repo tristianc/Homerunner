@@ -1,0 +1,9 @@
+[Plugin]
+	Module=homerunner
+	IAge=1
+	Builtin=false
+	Name=Homerunner
+	Description=Plugin to access streaming channels from detected HD Homerun Prime units
+	Authors=Tristin Celestin
+	Copyright=Copyright ©2013
+	Website=http://thoughtjacked.net

@@ -119,7 +119,9 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libhomerunner_la_LIBADD =
-am_libhomerunner_la_OBJECTS = libhomerunner_la-homerunner_plugin.lo
+am_libhomerunner_la_OBJECTS = libhomerunner_la-homerunner_plugin.lo \
+	libhomerunner_la-channel_list.lo \
+	libhomerunner_la-homerunner.gresource.lo
 libhomerunner_la_OBJECTS = $(am_libhomerunner_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -216,8 +218,11 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GLIB_CFLAGS = @GLIB_CFLAGS@
+GLIB_COMPILE_RESOURCES = @GLIB_COMPILE_RESOURCES@
 GLIB_LIBS = @GLIB_LIBS@
 GREP = @GREP@
+HDHOMERUN_CFLAGS = @HDHOMERUN_CFLAGS@
+HDHOMERUN_LIBS = @HDHOMERUN_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -324,18 +329,15 @@ top_srcdir = @top_srcdir@
 # in the $(libdir) directory. For example /usr/lib
 lib_LTLIBRARIES = libhomerunner.la
 
-#######################################
-# Build information for each library
-
 # Sources for homerunner
-libhomerunner_la_SOURCES = homerunner_plugin.c
+libhomerunner_la_SOURCES = homerunner_plugin.c channel_list.c homerunner.gresource.c
 
 # Linker options libTestProgram
-libhomerunner_la_LDFLAGS = $(GLIB_LIBS) $(TOTEM_LIBS) $(LIBPEAS_LIBS)
+libhomerunner_la_LDFLAGS = $(GLIB_LIBS) $(TOTEM_LIBS) $(LIBPEAS_LIBS) $(HDHOMERUN_LIBS)
 
 # Compiler options. Here we are adding the include directory
 # to be searched for headers included in the source code.
-libhomerunner_la_CFLAGS = -I$(top_srcdir)/include $(GLIB_CFLAGS) $(TOTEM_CFLAGS) $(LIBPEAS_CFLAGS)
+libhomerunner_la_CFLAGS = -I$(top_srcdir)/include $(GLIB_CFLAGS) $(TOTEM_CFLAGS) $(LIBPEAS_CFLAGS) $(HDHOMERUN_CFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -415,6 +417,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhomerunner_la-channel_list.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhomerunner_la-homerunner.gresource.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhomerunner_la-homerunner_plugin.Plo@am__quote@
 
 .c.o:
@@ -444,6 +448,20 @@ libhomerunner_la-homerunner_plugin.lo: homerunner_plugin.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='homerunner_plugin.c' object='libhomerunner_la-homerunner_plugin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhomerunner_la_CFLAGS) $(CFLAGS) -c -o libhomerunner_la-homerunner_plugin.lo `test -f 'homerunner_plugin.c' || echo '$(srcdir)/'`homerunner_plugin.c
+
+libhomerunner_la-channel_list.lo: channel_list.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhomerunner_la_CFLAGS) $(CFLAGS) -MT libhomerunner_la-channel_list.lo -MD -MP -MF $(DEPDIR)/libhomerunner_la-channel_list.Tpo -c -o libhomerunner_la-channel_list.lo `test -f 'channel_list.c' || echo '$(srcdir)/'`channel_list.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhomerunner_la-channel_list.Tpo $(DEPDIR)/libhomerunner_la-channel_list.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='channel_list.c' object='libhomerunner_la-channel_list.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhomerunner_la_CFLAGS) $(CFLAGS) -c -o libhomerunner_la-channel_list.lo `test -f 'channel_list.c' || echo '$(srcdir)/'`channel_list.c
+
+libhomerunner_la-homerunner.gresource.lo: homerunner.gresource.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhomerunner_la_CFLAGS) $(CFLAGS) -MT libhomerunner_la-homerunner.gresource.lo -MD -MP -MF $(DEPDIR)/libhomerunner_la-homerunner.gresource.Tpo -c -o libhomerunner_la-homerunner.gresource.lo `test -f 'homerunner.gresource.c' || echo '$(srcdir)/'`homerunner.gresource.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhomerunner_la-homerunner.gresource.Tpo $(DEPDIR)/libhomerunner_la-homerunner.gresource.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='homerunner.gresource.c' object='libhomerunner_la-homerunner.gresource.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhomerunner_la_CFLAGS) $(CFLAGS) -c -o libhomerunner_la-homerunner.gresource.lo `test -f 'homerunner.gresource.c' || echo '$(srcdir)/'`homerunner.gresource.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -572,7 +590,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
+clean-am: clean-generic clean-libLTLIBRARIES clean-libtool clean-local \
 	mostlyclean-am
 
 distclean: distclean-am
@@ -644,8 +662,8 @@ uninstall-am: uninstall-libLTLIBRARIES
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-am clean clean-generic \
-	clean-libLTLIBRARIES clean-libtool cscopelist-am ctags \
-	ctags-am distclean distclean-compile distclean-generic \
+	clean-libLTLIBRARIES clean-libtool clean-local cscopelist-am \
+	ctags ctags-am distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
@@ -657,6 +675,16 @@ uninstall-am: uninstall-libLTLIBRARIES
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags tags-am uninstall uninstall-am uninstall-libLTLIBRARIES
 
+
+#######################################
+# Build information for each library
+
+# Make resources
+homerunner.gresource.c: homerunner.gresource.xml channel_list.ui
+	$(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir) --generate-source homerunner.gresource.xml
+
+clean-local:
+	rm -rf homerunner.gresource.c
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
