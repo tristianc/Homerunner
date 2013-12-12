@@ -1,0 +1,2 @@
+# Needed for the void play_channel(uint, uint) signal
+VOID:UINT,UINT

@@ -18,10 +18,13 @@ dnl AS_COMPILER_FLAG([-fdiagnostics-color=auto], [AM_CFLAGS="$AM_CFLAGS -fdiagno
 GLIB_REQ=2.32.0
 TOTEM_REQ=3.10.0
 LIBPEAS_REQ=0.7.3
+LIBXML2_REQ=2.9.0
+CLUTTERGTK_REQ=1.4.4
 PKG_CHECK_MODULES([GLIB], [glib-2.0 >= $GLIB_REQ])
 PKG_CHECK_MODULES([TOTEM], [totem >= $TOTEM_REQ])
 PKG_CHECK_MODULES([LIBPEAS], [libpeas-1.0 >= $LIBPEAS_REQ])
-
+PKG_CHECK_MODULES([LIBXML2], [libxml-2.0 >= $LIBXML2_REQ])
+PKG_CHECK_MODULES([CLUTTERGTK], [clutter-gtk-1.0 >= $CLUTTERGTK_REQ])
 
 # Get HDHomerun library and include locations
 # Learned from http://www.openismus.com/documents/linux/using_libraries/using_libraries.shtml
@@ -37,12 +40,17 @@ AC_ARG_WITH([hdhomerun-lib-path],
 	[HDHOMERUN_LIBS="-L$withval -lhdhomerun"],
 	[HDHOMERUN_LIBS='-lhdhomerun'])
 AC_SUBST([HDHOMERUN_LIBS])
-dnl AC_CHECK_LIB([$(HDHOMERUN_LIBS)/hdhomerun], [hdhomerun_device_create], [], AC_MSG_ERROR([HDHomerun library not found.]))
 
-# Find glib-resource command
+# Find glib-compile-resource command
 AC_PATH_PROG(GLIB_COMPILE_RESOURCES, glib-compile-resources, no)
 if test x$GLIB_COMPILE_RESOURCES = xno; then
-	AC_MSG_ERROR(Could not find a glib-compile-resources in your PATH)
+	AC_MSG_ERROR(Could not find glib-compile-resources in your PATH)
+fi
+
+# Find glib-genmarshal command
+AC_PATH_PROG(GLIB_GENMARSHAL, glib-genmarshal, no)
+if test x$GLIB_GENMARSHAL = xno; then
+	AC_MSG_ERROR(Could not find glib-genmarshal in your PATH)
 fi
 
 dnl Initialize Libtool

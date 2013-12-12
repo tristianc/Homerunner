@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.16.0 on Fri Oct 25 19:01:27 2013 -->
+<!-- Generated with glade 3.16.0 on Sun Dec  8 16:34:10 2013 -->
 <interface>
   <!-- interface-requires gtk+ 3.10 -->
-  <object class="GtkListStore" id="liststore1">
-    <columns>
-      <!-- column-name Channel -->
-      <column type="guint"/>
-      <!-- column-name Content -->
-      <column type="gchar"/>
-    </columns>
-  </object>
-  <template class="TotemChannelList" parent="GtkBox">
+  <template class="TJChannelList" parent="GtkBox">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="margin_left">8</property>
-    <property name="margin_top">5</property>
+    <property name="margin_left">5</property>
+    <property name="margin_right">5</property>
     <property name="orientation">vertical</property>
     <child>
       <object class="GtkBox" id="box1">
@@ -35,15 +27,13 @@
           </packing>
         </child>
         <child>
-          <object class="GtkComboBoxText" id="comboboxtext1">
+          <object class="GtkComboBox" id="combobox1">
             <property name="visible">True</property>
-            <property name="sensitive">False</property>
             <property name="can_focus">False</property>
           </object>
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="padding">5</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -63,8 +53,6 @@
           <object class="GtkTreeView" id="treeview1">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="vexpand">True</property>
-            <property name="model">liststore1</property>
             <child internal-child="selection">
               <object class="GtkTreeSelection" id="treeview-selection1"/>
             </child>
@@ -72,7 +60,7 @@
         </child>
       </object>
       <packing>
-        <property name="expand">False</property>
+        <property name="expand">True</property>
         <property name="fill">True</property>
         <property name="position">1</property>
       </packing>

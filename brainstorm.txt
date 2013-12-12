@@ -1,0 +1,39 @@
+The channels will be saved in the user configuration folder (~/.config/homerunner/channels)
+The filename for each channel file will be the hex id of the device that the channels correspond to.
+
+A configuration file specifying other parameters about the plugin will be saved in the user configuration folder (~/.config/homerunner/)
+
+The schema file will be in the same directory as the homerunner plugin (~/.local/totem/plugins/homerunner)
+
+
+How to set selected device for playback
+Combobox triggers changed signal
+
+-- (changed) Signal triggers handler inside widget
+
+---- (on_changed) Handler inside widget calls combo_box_get_active_iter
+---- (selected) Signal is emitted with active_iter
+
+----- (on_selected_set_device) Handler inside plugin uses manager to get device using active iter
+----- (There need to be _get_channel_model and _get_device_model methods for channel_list)
+----- A discovery object is created
+----- get_free_tuner_from_device is used to get a free tuner
+----- Sets private variable to device with free tuner
+
+How to set channels for selected device
+
+-- (changed) Signal triggers handler inside widget
+
+---- (on_changed) Handler inside widget calls combo_box_get_active_iter
+---- (selected) Signal is emitted with active_iter
+
+------ (on_selected_set_channels) Handler inside plugin uses manager to get device using active iter
+------ (There need to be _get_channel_model and _get_device_model methods for channel_list)
+------call _get_channels_for_device
+
+
+_get_channels_for_device
+-- if channels.xml file exists for device number, convert it to a liststore and load it
+-- otherwise
+--- scan channels
+--- display message indicating that scan is busy
