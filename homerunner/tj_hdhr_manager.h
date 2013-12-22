@@ -5,8 +5,8 @@
  *      Author: tristian
  */
 
-#ifndef HDHR_MANAGER_H_
-#define HDHR_MANAGER_H_
+#ifndef TJ_HDHR_MANAGER_H
+#define TJ_HDHR_MANAGER_H
 
 #include <glib.h>
 #include <glib-object.h>
@@ -15,27 +15,6 @@
 #define HDHOMERUN_H
 #include <hdhomerun/hdhomerun.h>
 #endif
-
-/* This is the structure of the GtkListStore returned by get_devices */
-enum
-{
-	TJ_HDHR_MANAGER_DEV_ID_COLUMN = 0,
-	TJ_HDHR_MANAGER_DEV_TYPE_COLUMN,
-	TJ_HDHR_MANAGER_IP_ADDR_COLUMN,
-	TJ_HDHR_MANAGER_TUNER_COUNT
-};
-
-/* This is the structure of the GtkListStore returned by scan_channels & load_channels */
-enum
-{
-	TJ_HDHR_MANAGER_VCHANNEL_COLUMN = 0,
-	TJ_HDHR_MANAGER_STATION_COLUMN,
-	TJ_HDHR_MANAGER_FREQ_COLUMN,
-	TJ_HDHR_MANAGER_PROGRAM_ID_COLUMN,
-	TJ_HDHR_MANAGER_N_COLUMNS
-};
-
-#define TJ_HDHR_MANAGER_XML_NAMESPACE "http://www.thoughtjacked.net/homerunner/1.0"
 
 G_BEGIN_DECLS
 
@@ -62,22 +41,15 @@ struct _TJHDHRManagerClass
 };
 
 TJHDHRManager *tj_hdhr_manager_new();
-void tj_hdhr_manager_init_devices(TJHDHRManager *self);
+
+/* Discovery Methods */
+
 GtkListStore *tj_hdhr_manager_get_devices(TJHDHRManager *self);
-struct hdhomerun_device_t *tj_hdhr_get_device_from_liststore(
-		TJHDHRManager *self, GtkListStore *device_store,
-		GtkTreeIter *device_iter, struct hdhomerun_debug_t *debug);
-GtkListStore *tj_hdhr_manager_test_scan_channels(TJHDHRManager *self);
-GtkListStore *tj_hdhr_manager_scan_channels(TJHDHRManager *self);
-void tj_hdhr_manager_save_channels_to_xml_file(TJHDHRManager *self,
-		GtkListStore *channel_store, gchar *path, gchar *schema_path);
-GtkListStore *tj_hdhr_manager_load_channels_from_xml_file(TJHDHRManager *self,
-		gchar *path, gchar *schema_path);
-void tj_hdhr_manager_stream_channel_to_uri(TJHDHRManager *self,
-		struct hdhomerun_device_t *dev, guint32 frequency, guint32 program_id,
-		gchar* uri);
-void tj_hdhr_manager_stop_streaming(TJHDHRManager *self, struct hdhomerun_device_t *dev);
+
+/* Tuner Methods */
+
+struct hdhomerun_device_t *tj_hdhr_manager_get_tuner(TJHDHRManager *self, uint32_t id);
 
 G_END_DECLS
 
-#endif /* HDHR_MANAGER_H_ */
+#endif

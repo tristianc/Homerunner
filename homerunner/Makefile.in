@@ -123,6 +123,8 @@ am_libhomerunner_la_OBJECTS = libhomerunner_la-homerunner_plugin.lo \
 	libhomerunner_la-marshaller.lo \
 	libhomerunner_la-tj_channel_list.lo \
 	libhomerunner_la-tj_hdhr_manager.lo \
+	libhomerunner_la-tj_hdhr_channel_manager.lo \
+	libhomerunner_la-tj_hdhr_playback_manager.lo \
 	libhomerunner_la-homerunner.gresource.lo
 libhomerunner_la_OBJECTS = $(am_libhomerunner_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -337,14 +339,14 @@ top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = libhomerunner.la
 
 # Sources for homerunner
-libhomerunner_la_SOURCES = homerunner_plugin.c marshaller.c tj_channel_list.c tj_hdhr_manager.c homerunner.gresource.c
+libhomerunner_la_SOURCES = homerunner_plugin.c marshaller.c tj_channel_list.c tj_hdhr_manager.c tj_hdhr_channel_manager.c tj_hdhr_playback_manager.c homerunner.gresource.c
 
-# Linker options libTestProgram
+# Linker options libhomerunner
 libhomerunner_la_LDFLAGS = $(GLIB_LIBS) $(TOTEM_LIBS) $(LIBPEAS_LIBS) $(LIBXML2_LIBS) $(HDHOMERUN_LIBS) $(CLUTTERGTK_LIBS)
 
 # Compiler options. Here we are adding the include directory
 # to be searched for headers included in the source code.
-libhomerunner_la_CFLAGS = -I$(top_srcdir)/include $(GLIB_CFLAGS) $(TOTEM_CFLAGS) $(LIBPEAS_CFLAGS) $(LIBXML2_CFLAGS) $(HDHOMERUN_CFLAGS) $(CLUTTERGTK_CFLAGS)
+libhomerunner_la_CFLAGS = -O0 -I$(top_srcdir)/include $(GLIB_CFLAGS) $(TOTEM_CFLAGS) $(LIBPEAS_CFLAGS) $(LIBXML2_CFLAGS) $(HDHOMERUN_CFLAGS) $(CLUTTERGTK_CFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -428,7 +430,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhomerunner_la-homerunner_plugin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhomerunner_la-marshaller.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhomerunner_la-tj_channel_list.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhomerunner_la-tj_hdhr_channel_manager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhomerunner_la-tj_hdhr_manager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhomerunner_la-tj_hdhr_playback_manager.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -478,6 +482,20 @@ libhomerunner_la-tj_hdhr_manager.lo: tj_hdhr_manager.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tj_hdhr_manager.c' object='libhomerunner_la-tj_hdhr_manager.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhomerunner_la_CFLAGS) $(CFLAGS) -c -o libhomerunner_la-tj_hdhr_manager.lo `test -f 'tj_hdhr_manager.c' || echo '$(srcdir)/'`tj_hdhr_manager.c
+
+libhomerunner_la-tj_hdhr_channel_manager.lo: tj_hdhr_channel_manager.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhomerunner_la_CFLAGS) $(CFLAGS) -MT libhomerunner_la-tj_hdhr_channel_manager.lo -MD -MP -MF $(DEPDIR)/libhomerunner_la-tj_hdhr_channel_manager.Tpo -c -o libhomerunner_la-tj_hdhr_channel_manager.lo `test -f 'tj_hdhr_channel_manager.c' || echo '$(srcdir)/'`tj_hdhr_channel_manager.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhomerunner_la-tj_hdhr_channel_manager.Tpo $(DEPDIR)/libhomerunner_la-tj_hdhr_channel_manager.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tj_hdhr_channel_manager.c' object='libhomerunner_la-tj_hdhr_channel_manager.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhomerunner_la_CFLAGS) $(CFLAGS) -c -o libhomerunner_la-tj_hdhr_channel_manager.lo `test -f 'tj_hdhr_channel_manager.c' || echo '$(srcdir)/'`tj_hdhr_channel_manager.c
+
+libhomerunner_la-tj_hdhr_playback_manager.lo: tj_hdhr_playback_manager.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhomerunner_la_CFLAGS) $(CFLAGS) -MT libhomerunner_la-tj_hdhr_playback_manager.lo -MD -MP -MF $(DEPDIR)/libhomerunner_la-tj_hdhr_playback_manager.Tpo -c -o libhomerunner_la-tj_hdhr_playback_manager.lo `test -f 'tj_hdhr_playback_manager.c' || echo '$(srcdir)/'`tj_hdhr_playback_manager.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libhomerunner_la-tj_hdhr_playback_manager.Tpo $(DEPDIR)/libhomerunner_la-tj_hdhr_playback_manager.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tj_hdhr_playback_manager.c' object='libhomerunner_la-tj_hdhr_playback_manager.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhomerunner_la_CFLAGS) $(CFLAGS) -c -o libhomerunner_la-tj_hdhr_playback_manager.lo `test -f 'tj_hdhr_playback_manager.c' || echo '$(srcdir)/'`tj_hdhr_playback_manager.c
 
 libhomerunner_la-homerunner.gresource.lo: homerunner.gresource.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhomerunner_la_CFLAGS) $(CFLAGS) -MT libhomerunner_la-homerunner.gresource.lo -MD -MP -MF $(DEPDIR)/libhomerunner_la-homerunner.gresource.Tpo -c -o libhomerunner_la-homerunner.gresource.lo `test -f 'homerunner.gresource.c' || echo '$(srcdir)/'`homerunner.gresource.c

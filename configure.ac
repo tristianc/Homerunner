@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
 AC_INIT(homerunner, 1.0)
-AC_PROG_CC
+AC_PROG_CC([gcc clang])
 
 AC_CANONICAL_SYSTEM
 

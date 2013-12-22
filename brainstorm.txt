@@ -7,17 +7,16 @@ The schema file will be in the same directory as the homerunner plugin (~/.local
 
 
 How to set selected device for playback
-Combobox triggers changed signal
+-- Combobox triggers changed signal inside channel_list
+-- (changed) Signal triggers handler inside channel_list
+--- (on_changed) Handler inside widget calls combo_box_get_active_device_id
+--- (selected_device) Signal is emitted with a char* device_id
 
--- (changed) Signal triggers handler inside widget
+---- Since pretty much any device model can be provided to the channel_list, channel_list should make a virtual method available that allows the programmer to determine how to render the display text using the model provided.
 
----- (on_changed) Handler inside widget calls combo_box_get_active_iter
----- (selected) Signal is emitted with active_iter
 
------ (on_selected_set_device) Handler inside plugin uses manager to get device using active iter
------ (There need to be _get_channel_model and _get_device_model methods for channel_list)
------ A discovery object is created
------ get_free_tuner_from_device is used to get a free tuner
+----- (on_set_device) Handler inside plugin uses manager to set device using device_id
+----- get_tuner_from_device is used to get a free tuner
 ----- Sets private variable to device with free tuner
 
 How to set channels for selected device
@@ -37,3 +36,13 @@ _get_channels_for_device
 -- otherwise
 --- scan channels
 --- display message indicating that scan is busy
+
+
+
+
+It's not a good idea to have multiple manager objects each managing 1 playback and N recordings.
+Each manager wouldn't be aware of what the other manager was recording. If UI was tied to a manager,
+when I switched between managers, the recording status of a channel might disappear depending on which
+manager was active.
+I should instead have an object that manages playback, an object that manages channel scanning,
+and an object that manages recording.
