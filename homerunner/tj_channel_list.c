@@ -28,6 +28,7 @@ struct _TJChannelListPrivate
 
 G_DEFINE_TYPE_WITH_PRIVATE(TJChannelList, tj_channel_list, GTK_TYPE_BOX);
 
+
 static void on_combobox_changed(GtkComboBox *box, TJChannelList *user_data)
 {
 	GtkTreeIter iter;
@@ -85,6 +86,7 @@ static void tj_channel_list_add_columns(TJChannelList *self)
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *channel_column;
 	GtkTreeViewColumn *station_column;
+	GtkTreeViewColumn *column;
 
 	g_assert(self != NULL);
 
@@ -97,6 +99,42 @@ static void tj_channel_list_add_columns(TJChannelList *self)
 		channel_column);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(self->priv->treeview1),
 		station_column);
+
+	column = gtk_tree_view_get_column(GTK_TREE_VIEW(self->priv->treeview1), CHANNEL_COLUMN);
+	gtk_tree_view_column_set_sort_column_id(column, TJ_CHANNEL_MODEL_VCHANNEL_COLUMN);
+	column = gtk_tree_view_get_column(GTK_TREE_VIEW(self->priv->treeview1), STATION_COLUMN);
+	gtk_tree_view_column_set_sort_column_id(column, TJ_CHANNEL_MODEL_STATION_COLUMN);
+}
+
+static gint tj_channel_list_sort_channel_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer user_data)
+{
+	gint ret = 0;
+	gchar *left_channel;
+	gchar *right_channel;
+	gfloat left_val;
+	gfloat right_val;
+	int result;
+
+	result = 0;
+	gtk_tree_model_get(model, a, TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, &left_channel, -1);
+	gtk_tree_model_get(model, b, TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, &right_channel, -1);
+	if (left_channel == NULL || right_channel == NULL) {
+		if (left_channel == NULL && right_channel == NULL) {
+			result = 0;
+		}
+		else {
+			result = (left_channel == NULL) ? -1 : 1;
+		}
+	}
+	else {
+		left_val = atof(left_channel);
+		right_val = atof(right_channel);
+		result = left_val - right_val;
+	}
+
+	g_free(left_channel);
+	g_free(right_channel);
+	return result;
 }
 
 static void tj_channel_list_class_init(TJChannelListClass *k)
@@ -151,10 +189,6 @@ static void tj_channel_list_init(TJChannelList *self)
 	g_signal_connect(self->priv->treeview1, "row-activated",
 			G_CALLBACK (on_row_activated), self);
 
-	/* ToDo:
-	 * Add functionality here to allow channel list to sort by channel number and by station name
-	 */
-
 	device_renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(self->priv->combobox1),
 			device_renderer, TRUE);
@@ -177,6 +211,8 @@ void tj_channel_list_set_channel_model(TJChannelList *self, GtkListStore *channe
 
 	gtk_tree_view_set_model(GTK_TREE_VIEW(self->priv->treeview1),
 		GTK_TREE_MODEL(channel_model));
+	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(channel_model), TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, tj_channel_list_sort_channel_func, NULL, NULL);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(channel_model), TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, GTK_SORT_ASCENDING);
 }
 
 GtkListStore *tj_channel_list_get_channel_model(TJChannelList *self)

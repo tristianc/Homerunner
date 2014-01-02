@@ -35,7 +35,7 @@ struct _TJHDHRPlaybackManagerClass
 };
 
 TJHDHRPlaybackManager *tj_hdhr_playback_manager_new();
-gboolean tj_hdhr_playback_manager_stream_channel_to_uri(TJHDHRPlaybackManager *self, guint32 frequency, guint32 program_id, gchar* uri, uint32_t device_id);
+gboolean tj_hdhr_playback_manager_stream_channel_to_ip(TJHDHRPlaybackManager *self, guint32 frequency, guint32 program_id, uint32_t device_id, gchar *ip, guint port);
 void tj_hdhr_playback_manager_stop_streaming(TJHDHRPlaybackManager *self);
 
 G_END_DECLS

@@ -72,12 +72,21 @@ GtkListStore *tj_hdhr_channel_manager_test_scan_channels(TJHDHRChannelManager *s
 			TJ_CHANNEL_MODEL_PROGRAM_ID_COLUMN, 1111,
 			-1);
 	gtk_list_store_insert_with_values(test_channel_store, &channel_iter, -1,
-			TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, "92.Q",
+			TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, "92",
 			TJ_CHANNEL_MODEL_STATION_COLUMN, "OniTV",
 			TJ_CHANNEL_MODEL_FREQ_COLUMN, 0001,
 			TJ_CHANNEL_MODEL_PROGRAM_ID_COLUMN, 2222,
 			-1);
 	return test_channel_store;
+}
+
+static void tj_hdhr_channel_manager_get_lineup(TJHDHRChannelManager *self, uint32_t device_id)
+{
+	/* ToDo:
+	 * Attempt to get lineup from device
+	 * In scan_channels,
+	 * If virtual channel is present in lineup, save details to channel store
+	 */
 }
 
 GtkListStore *tj_hdhr_channel_manager_scan_channels(TJHDHRChannelManager *self, uint32_t device_id)
@@ -188,6 +197,7 @@ static void tj_hdhr_channel_manager_add_channel_to_xml(TJHDHRChannelManager *sel
 	gchar *pid_content;
 	xmlNodePtr local_parent;
 	xmlNodePtr node;
+	GRegex *sanitizer;
 
 	g_assert(self != NULL);
 	g_assert(parent != NULL);
@@ -214,7 +224,11 @@ static void tj_hdhr_channel_manager_add_channel_to_xml(TJHDHRChannelManager *sel
 		goto cleanup;
 	}
 
-	station_content = g_strdup_printf("%s", station);
+	sanitizer = g_regex_new("\\&", G_REGEX_OPTIMIZE, 0, NULL);
+	g_debug("Station is: %s", station);
+	station_content = g_regex_replace(sanitizer, station, -1, 0, "&amp;", 0, NULL);
+	g_regex_unref(sanitizer);
+	g_debug("Station replacement content is: %s", station_content);
 	node = xmlNewChild(local_parent, NULL, BAD_CAST "station",
 			BAD_CAST station_content);
 	if (node == NULL) {
@@ -247,7 +261,7 @@ cleanup:
 }
 
 void tj_hdhr_channel_manager_save_channels_to_xml_file(TJHDHRChannelManager *self,
-		GtkListStore *channel_store, gchar *path, gchar *schema_path)
+		GtkListStore *channel_store, gchar *path, gchar *schema_path, uint32_t device_id)
 {
 	int rc;
 	xmlTextWriterPtr writer;
@@ -262,6 +276,7 @@ void tj_hdhr_channel_manager_save_channels_to_xml_file(TJHDHRChannelManager *sel
 	gboolean valid;
 	gchar *vchannel;
 	gchar *station;
+	gchar *device_str;
 	guint32 frequency;
 	guint32 program_id;
 
@@ -289,11 +304,9 @@ void tj_hdhr_channel_manager_save_channels_to_xml_file(TJHDHRChannelManager *sel
 		goto cleanup;
 	}
 
-	/*
-	 * ToDo:
-	 * Add real device id
-	 */
-	id_attr = xmlNewProp(device_node, BAD_CAST "id", BAD_CAST "ABCDEFG");
+	device_str = g_strdup_printf("%X", device_id);
+	id_attr = xmlNewProp(device_node, BAD_CAST "id", BAD_CAST device_str);
+	g_free(device_str);
 	if (id_attr == NULL) {
 		g_debug("Could not add id attribute to device node");
 		goto cleanup;

@@ -3,7 +3,6 @@
 
 struct _TJHDHRPlaybackManagerPrivate
 {
-	struct hdhomerun_device_selector_t *playback_selector;
 	struct hdhomerun_device_t *playback_device;
 };
 
@@ -44,6 +43,7 @@ static void tj_hdhr_playback_manager_dispose(GObject *object)
 	 * the parent class implements the dispose() virtual function: it is
 	 * always guaranteed to do so
 	 */
+	tj_hdhr_playback_manager_stop_streaming(TJ_HDHR_PLAYBACK_MANAGER(object));
 	G_OBJECT_CLASS (tj_hdhr_playback_manager_parent_class)->dispose(object);
 }
 
@@ -58,19 +58,16 @@ static void tj_hdhr_playback_manager_finalize(GObject *object)
 }
 
 
-gboolean tj_hdhr_playback_manager_stream_channel_to_uri(TJHDHRPlaybackManager *self, guint32 frequency, guint32 program_id, gchar* uri, uint32_t device_id)
+gboolean tj_hdhr_playback_manager_stream_channel_to_ip(TJHDHRPlaybackManager *self, guint32 frequency, guint32 program_id, uint32_t device_id, gchar *ip, guint port)
 {
 	gboolean succeeded;
+	gchar *url;
+	gchar *freq_str;
+	gchar *pid_str;
 
 	g_assert(self != NULL);
-	g_assert(uri != NULL);
+	g_assert(ip != NULL);
 
-	/* ToDo:
-	 * 	Refresh the existing lock if possible
-	 * 	If refresh is not possible, setup the device selector API
-	 * 	Find and lock an available tuner
-	 * 	Call hdhomerun_device_set_tuner_target() with the provided UDP port
-	 */
 	succeeded = FALSE;
 	if (self->priv->playback_device != NULL) {
 		tj_hdhr_playback_manager_stop_streaming(self);
@@ -79,8 +76,17 @@ gboolean tj_hdhr_playback_manager_stream_channel_to_uri(TJHDHRPlaybackManager *s
 	if (self->priv->playback_device == NULL) {
 		g_error("Could not acquire tuner.");
 	} else {
-		succeeded = (gboolean)hdhomerun_device_set_tuner_target(self->priv->playback_device, uri);
+		g_debug("Streaming using device %X and tuner %d", device_id, hdhomerun_device_get_tuner(self->priv->playback_device));
+		freq_str = g_strdup_printf("%d", frequency);
+		pid_str = g_strdup_printf("%d", program_id);
+		url = g_strdup_printf("udp://%s:%d", ip, port);
+		hdhomerun_device_set_tuner_channel(self->priv->playback_device, freq_str);
+		hdhomerun_device_set_tuner_program(self->priv->playback_device, pid_str);
+		succeeded = (gboolean)hdhomerun_device_set_tuner_target(self->priv->playback_device, url);
+		g_free(freq_str);
+		g_free(pid_str);
 	}
+	g_free(url);
 	return succeeded;
 }
 
@@ -92,3 +98,4 @@ void tj_hdhr_playback_manager_stop_streaming(TJHDHRPlaybackManager *self)
 	hdhomerun_device_tuner_lockkey_release(self->priv->playback_device);
 	self->priv->playback_device = NULL;
 }
+

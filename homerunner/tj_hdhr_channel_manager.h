@@ -41,7 +41,7 @@ TJHDHRChannelManager *tj_hdhr_channel_manager_new();
 
 GtkListStore *tj_hdhr_channel_manager_test_scan_channels(TJHDHRChannelManager *self);
 GtkListStore *tj_hdhr_channel_manager_scan_channels(TJHDHRChannelManager *self, uint32_t device_id);
-void tj_hdhr_channel_manager_save_channels_to_xml_file(TJHDHRChannelManager *self, GtkListStore *channel_store, gchar *path, gchar *schema_path);
+void tj_hdhr_channel_manager_save_channels_to_xml_file(TJHDHRChannelManager *self, GtkListStore *channel_store, gchar *path, gchar *schema_path, uint32_t device_id);
 GtkListStore *tj_hdhr_channel_manager_load_channels_from_xml_file(TJHDHRChannelManager *self, gchar *path, gchar *schema_path);
 
 G_END_DECLS

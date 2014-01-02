@@ -32,15 +32,6 @@ struct _TJChannelListClass
 {
 	GtkBoxClass parent_class;
 
-        /* virtual functions */
-        /*
-         * ToDo:
-         * Finish refactoring the render function so that it is a virtual function
-         * with a default implementation. Somehow, this function has to provide
-         * a cell renderer and a GtkCellLayoutDataFunc
-         */ 
-        //void (*render_device_name)(GtkCellRenderer *renderer, GtkCellLayoutDataFunc);
-
 	/* signals */
 	void (* play_channel)(TJChannelList *self, guint frequency, guint program_id, gpointer user_data);
 	void (* set_device)(TJChannelList *self, guint32 device_id, gpointer user_data);

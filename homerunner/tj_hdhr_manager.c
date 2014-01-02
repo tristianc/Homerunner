@@ -149,7 +149,7 @@ struct hdhomerun_device_t *tj_hdhr_manager_get_tuner(TJHDHRManager *self, uint32
 				for (j = 0; j < discovery->tuner_count; j++)
 				{
 					device = hdhomerun_device_create(device_id, discovery->ip_addr, j, NULL);
-					g_debug("Inserted device with with id %X. It has %u tuners",
+					g_debug("Created device with with id %X. It has %u tuners",
 							self->priv->discoveries[i].device_id,
 							self->priv->discoveries[i].tuner_count);
 					hdhomerun_device_selector_add_device(selector, device);
@@ -163,4 +163,28 @@ struct hdhomerun_device_t *tj_hdhr_manager_get_tuner(TJHDHRManager *self, uint32
 		device = hdhomerun_device_selector_choose_and_lock(selector, NULL);
 	}
 	return device;
+}
+
+gchar *tj_hdhr_manager_get_host_ip_relative_to_device(TJHDHRManager *self, uint32_t device_id)
+{
+	uint32_t ip;
+	gchar *ip_str;
+	gchar *dev_str;
+	struct hdhomerun_device_t *dev;
+
+	g_assert(self != NULL);
+
+	ip_str = NULL;
+	dev_str = g_strdup_printf("%X", device_id);
+	dev = hdhomerun_device_create_from_str(dev_str, NULL);
+	if (dev != NULL) {
+		ip = hdhomerun_device_get_local_machine_addr(dev);
+		if (ip > 0) {
+			ip_str = ipbits_to_str(ip);
+		}
+		hdhomerun_device_destroy(dev);
+	}
+	g_free(dev_str);
+
+	return ip_str;
 }

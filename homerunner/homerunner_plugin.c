@@ -21,10 +21,10 @@ typedef struct
 	TJHDHRChannelManager *channel_manager;
 	TJHDHRPlaybackManager *playback_manager;
 	gchar* plugin_config_path;
-	gchar* channels_path;
+	gchar* channel_path;
 	gint play_channel_handler_id;
 	gint set_device_handler_id;
-	gint device_id;
+	guint32 device_id;
 } TotemHomerunnerPluginPrivate;
 
 TOTEM_PLUGIN_REGISTER(TOTEM_TYPE_HOMERUNNER_PLUGIN, TotemHomerunnerPlugin,
@@ -33,48 +33,79 @@ TOTEM_PLUGIN_REGISTER(TOTEM_TYPE_HOMERUNNER_PLUGIN, TotemHomerunnerPlugin,
 static void on_set_device(TJChannelList *list, guint32 device_id, TotemHomerunnerPlugin *plugin)
 {
 	gboolean success;
+	gchar *schema_path;
+	gchar *filename;
+	gchar *abs_filename;
+	GtkListStore *channel_store;
+	GFile *channel_file;
+	GFileInputStream *channel_is;
+	GError *error;
+
+	g_assert(plugin != NULL);
+	g_assert(list != NULL);
 
 	g_debug("Got device id %X", device_id);
 	plugin->priv->device_id = device_id;
+	schema_path = totem_plugin_find_file("homerunner", "schema.xsd");
+	filename = g_strdup_printf("%X.xml", device_id);
+	abs_filename = g_build_filename(plugin->priv->channel_path, filename);
+	channel_file = g_file_new_for_path(abs_filename);
+	error = NULL;
+	g_debug("Attempting to read from %s", abs_filename);
+	channel_is = g_file_read(channel_file, NULL, &error);
+	if (error != NULL) {
+		g_debug("Could not read channels for device: %s", error->message);
+		channel_store = tj_hdhr_channel_manager_scan_channels(plugin->priv->channel_manager, device_id);
+		tj_hdhr_channel_manager_save_channels_to_xml_file(plugin->priv->channel_manager, channel_store, abs_filename, schema_path, device_id);
+		g_error_free(error);
+		error = NULL;
+	}
+	else {
+		g_object_unref(channel_is);
+		channel_store = tj_hdhr_channel_manager_load_channels_from_xml_file(plugin->priv->channel_manager, abs_filename, schema_path);
+	}
+	tj_channel_list_set_channel_model(TJ_CHANNEL_LIST(plugin->priv->channel_list), channel_store);
+	g_free(filename);
+	g_free(abs_filename);
+	g_free(schema_path);
+	g_object_unref(channel_store);
+	g_object_unref(channel_file);
 }
 
 static void on_play_channel(TJChannelList *list, guint frequency, guint program_id, TotemHomerunnerPlugin *plugin)
 {
 	TotemObject *totem;
 	BaconVideoWidget *bvw;
-	gchar *uri;
+	gchar *channel_url;
 	gchar *ip;
-	gchar *port;
-	gboolean status;
-	uint32_t local_ip;
+	guint port;
+	gboolean succeeded;
 
 	g_assert(plugin != NULL);
 	g_assert(list != NULL);
 
-	ip = g_strdup("127.0.0.1");
-	port = g_strdup("5000");
+	ip = tj_hdhr_manager_get_host_ip_relative_to_device(TJ_HDHR_MANAGER(plugin->priv->playback_manager), plugin->priv->device_id);
+	if (ip == NULL) {
+		g_debug("Could not get local IP address to stream to.");
+		return;
+	}
+	port = 5000;
 	totem = g_object_get_data(G_OBJECT(plugin), "object");
 	bvw = BACON_VIDEO_WIDGET (totem_get_video_widget(totem));
-	status = FALSE;
-	uri = g_strdup_printf("udp://%s:%s", ip, port);
+	channel_url = g_strdup_printf("udp://%s:%d", ip, port);
 
 	g_debug("Running play-channel handler with frequency %d and program_id %d", frequency, program_id);
-	status = tj_hdhr_playback_manager_stream_channel_to_uri(plugin->priv->playback_manager, frequency, program_id, uri, plugin->priv->device_id);
-	if (status == FALSE) {
-		g_debug("Was no successful in streaming channel to uri");
+
+	totem_object_add_to_playlist_and_play(totem, channel_url, "TV!");
+
+	succeeded = tj_hdhr_playback_manager_stream_channel_to_ip(plugin->priv->playback_manager, frequency, program_id, plugin->priv->device_id, ip, port);
+	if (succeeded == FALSE) {
+		g_debug("Was not successful in streaming channel to %s", channel_url);
 	}
-	bacon_video_widget_open(bvw, uri);
-	bacon_video_widget_play(bvw, NULL);
 	g_object_unref(bvw);
-	g_free(uri);
-	g_free(port);
+	g_free(channel_url);
 	g_free(ip);
 }
-
-//static void on_stop_playing()
-//{
-//
-//}
 
 static void verify_config_paths(TotemHomerunnerPlugin *self)
 {
@@ -98,8 +129,8 @@ static void verify_config_paths(TotemHomerunnerPlugin *self)
 		error = NULL;
 	}
 
-	self->priv->channels_path = g_build_filename(config_path, "homerunner", "channels", NULL);
-	channels_dir = g_file_new_for_path(self->priv->channels_path);
+	self->priv->channel_path = g_build_filename(config_path, "homerunner", "channels", NULL);
+	channels_dir = g_file_new_for_path(self->priv->channel_path);
 	g_file_make_directory(channels_dir, NULL, &error);
 	if (error != NULL) {
 		if (error->code != G_IO_ERROR_EXISTS) {
@@ -118,22 +149,13 @@ static void impl_activate(PeasActivatable *plugin)
 	TotemHomerunnerPlugin *self;
 	TotemObject *totem;
 	gchar *path;
-	gchar *schema_path;
 	GtkListStore *device_store;
 	GtkListStore *channel_store;
 
 	g_assert(plugin != NULL);
 
-	/*
-	 * ToDo:
-	 * Write and read channels using channels path
-	 */
 	self = TOTEM_HOMERUNNER_PLUGIN(plugin);
-	verify_config_paths(self);
-	path = g_strdup("/home/tristian/channels.xml");
 	totem = g_object_get_data(G_OBJECT(plugin), "object");
-	schema_path = totem_plugin_find_file("homerunner", "schema.xsd");
-
 	self->priv->channel_list = tj_channel_list_new();
 	self->priv->channel_manager = tj_hdhr_channel_manager_new();
 	self->priv->playback_manager = tj_hdhr_playback_manager_new();
@@ -147,22 +169,13 @@ static void impl_activate(PeasActivatable *plugin)
 			G_OBJECT(self->priv->channel_list), "set-device",
 			G_CALLBACK(on_set_device), self);
 
+	verify_config_paths(self);
 	gtk_widget_show(self->priv->channel_list);
 	totem_object_add_sidebar_page(totem, "channel_list", "Homerunner", self->priv->channel_list);
-
 	device_store = tj_hdhr_manager_get_devices(TJ_HDHR_MANAGER(self->priv->channel_manager));
-	//channel_store = tj_hdhr_manager_scan_channels(self->priv->manager);
-	//self->priv->channel_store = tj_hdhr_manager_test_scan_channels(self->priv->manager);
-	channel_store = tj_hdhr_channel_manager_load_channels_from_xml_file(self->priv->channel_manager, "/home/tristian/channels.xml", schema_path);
-
 	tj_channel_list_set_device_model(TJ_CHANNEL_LIST(self->priv->channel_list), device_store);
-	tj_channel_list_set_channel_model(TJ_CHANNEL_LIST(self->priv->channel_list), channel_store);
-	//tj_hdhr_manager_save_channels_to_xml_file(self->priv->manager, channel_store, path, schema_path);
-
-	g_object_unref(channel_store);
 	g_object_unref(device_store);
 	g_free(path);
-	g_free(schema_path);
 }
 
 static void impl_deactivate(PeasActivatable *plugin)
@@ -175,11 +188,12 @@ static void impl_deactivate(PeasActivatable *plugin)
 	/* Destroy resources created in impl_activate() here. e.g. Disconnect from signals
 	 * and remove menu entries and UI. */
 	self = TOTEM_HOMERUNNER_PLUGIN(plugin);
-	g_free(self->priv->channels_path);
+	g_free(self->priv->channel_path);
 	g_free(self->priv->plugin_config_path);
 	g_object_unref(self->priv->channel_manager);
 	g_object_unref(self->priv->playback_manager);
 	g_signal_handler_disconnect(plugin, self->priv->play_channel_handler_id);
+	g_signal_handler_disconnect(plugin, self->priv->set_device_handler_id);
 	totem = g_object_get_data(G_OBJECT(plugin), "object");
 	totem_object_remove_sidebar_page(totem, "channel_list");
 

@@ -50,6 +50,10 @@ GtkListStore *tj_hdhr_manager_get_devices(TJHDHRManager *self);
 
 struct hdhomerun_device_t *tj_hdhr_manager_get_tuner(TJHDHRManager *self, uint32_t id);
 
+/* Utility Methods */
+
+gchar *tj_hdhr_manager_get_host_ip_relative_to_device(TJHDHRManager *self, uint32_t device_id);
+
 G_END_DECLS
 
 #endif
