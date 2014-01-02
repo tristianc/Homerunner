@@ -6,7 +6,6 @@
 #include "tl_channel_list.h"
 #include "tl_hdhr_channel_manager.h"
 #include "tl_hdhr_playback_manager.h"
-#include "bacon-video-widget.h"
 
 #define TOTEM_TYPE_HOMERUNNER_PLUGIN			(totem_homerunner_plugin_get_type ())
 #define TOTEM_HOMERUNNER_PLUGIN(o)				(G_TYPE_CHECK_INSTANCE_CAST ((o), TOTEM_TYPE_HOMERUNNER_PLUGIN, TotemHomerunnerPlugin))
@@ -75,7 +74,6 @@ static void on_set_device(TLChannelList *list, guint32 device_id, TotemHomerunne
 static void on_play_channel(TLChannelList *list, guint frequency, guint program_id, TotemHomerunnerPlugin *plugin)
 {
 	TotemObject *totem;
-	BaconVideoWidget *bvw;
 	gchar *channel_url;
 	gchar *ip;
 	guint port;
@@ -91,7 +89,6 @@ static void on_play_channel(TLChannelList *list, guint frequency, guint program_
 	}
 	port = 5000;
 	totem = g_object_get_data(G_OBJECT(plugin), "object");
-	bvw = BACON_VIDEO_WIDGET (totem_get_video_widget(totem));
 	channel_url = g_strdup_printf("udp://%s:%d", ip, port);
 
 	g_debug("Running play-channel handler with frequency %d and program_id %d", frequency, program_id);
@@ -102,7 +99,6 @@ static void on_play_channel(TLChannelList *list, guint frequency, guint program_
 	if (succeeded == FALSE) {
 		g_debug("Was not successful in streaming channel to %s", channel_url);
 	}
-	g_object_unref(bvw);
 	g_free(channel_url);
 	g_free(ip);
 }
