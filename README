@@ -1,1 +1,5 @@
-Sample readme file for homerunner project.
+This is a Totem 3.10 plugin for viewing streams from the HD Homerun Prime without DLNA. The streams are broadcasted over UDP port 5000.
+
+The project builds a library, homerunner.so.
+
+The built plugin consists of three files: homerunner.so, homerunner.plugin, and schema.xsd. They should be placed inside the $HOME/share/.local/totem/plugins/homerunner folder.
