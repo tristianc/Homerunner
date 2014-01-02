@@ -8,7 +8,7 @@ lib_LTLIBRARIES = libhomerunner.la
 # Build information for each library
 
 # Make resources
-homerunner.gresource.c: homerunner.gresource.xml tj_channel_list.ui
+homerunner.gresource.c: homerunner.gresource.xml tl_channel_list.ui
 	$(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir) --generate-source homerunner.gresource.xml
 
 # Make marshalling functions
@@ -18,7 +18,7 @@ marshaller.c: marshaller.h marshaller.list
 	$(GLIB_GENMARSHAL) --body marshaller.list > marshaller.c
 
 # Sources for homerunner
-libhomerunner_la_SOURCES = homerunner_plugin.c marshaller.c tj_channel_list.c tj_hdhr_manager.c tj_hdhr_channel_manager.c tj_hdhr_playback_manager.c homerunner.gresource.c
+libhomerunner_la_SOURCES = homerunner_plugin.c marshaller.c tl_channel_list.c tl_hdhr_manager.c tl_hdhr_channel_manager.c tl_hdhr_playback_manager.c homerunner.gresource.c
 
 # Linker options libhomerunner
 libhomerunner_la_LDFLAGS = $(GLIB_LIBS) $(TOTEM_LIBS) $(LIBPEAS_LIBS) $(LIBXML2_LIBS) $(HDHOMERUN_LIBS) $(CLUTTERGTK_LIBS)

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.16.0 on Sun Dec  8 16:34:10 2013 -->
+<!-- Generated with glade 3.16.0 on Wed Jan  1 22:10:04 2014 -->
 <interface>
   <!-- interface-requires gtk+ 3.10 -->
-  <template class="TJChannelList" parent="GtkBox">
+  <template class="TLChannelList" parent="GtkBox">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="margin_left">5</property>

@@ -1,32 +1,32 @@
-#include "tj_hdhr_playback_manager.h"
+#include "tl_hdhr_playback_manager.h"
 
 
-struct _TJHDHRPlaybackManagerPrivate
+struct _TLHDHRPlaybackManagerPrivate
 {
 	struct hdhomerun_device_t *playback_device;
 };
 
-G_DEFINE_TYPE_WITH_PRIVATE(TJHDHRPlaybackManager, tj_hdhr_playback_manager, TJ_TYPE_HDHR_MANAGER);
+G_DEFINE_TYPE_WITH_PRIVATE(TLHDHRPlaybackManager, tl_hdhr_playback_manager, TL_TYPE_HDHR_MANAGER);
 
 
-static void tj_hdhr_playback_manager_class_init(TJHDHRPlaybackManagerClass *k)
+static void tl_hdhr_playback_manager_class_init(TLHDHRPlaybackManagerClass *k)
 {
 }
 
-static void tj_hdhr_playback_manager_init(TJHDHRPlaybackManager *self)
+static void tl_hdhr_playback_manager_init(TLHDHRPlaybackManager *self)
 {
-	self->priv = tj_hdhr_playback_manager_get_instance_private(self);
+	self->priv = tl_hdhr_playback_manager_get_instance_private(self);
 	self->priv->playback_device = NULL;
 }
 
-TJHDHRPlaybackManager *tj_hdhr_playback_manager_new()
+TLHDHRPlaybackManager *tl_hdhr_playback_manager_new()
 {
-	return g_object_new(TJ_TYPE_HDHR_PLAYBACK_MANAGER, NULL);
+	return g_object_new(TL_TYPE_HDHR_PLAYBACK_MANAGER, NULL);
 }
 
-static void tj_hdhr_playback_manager_dispose(GObject *object)
+static void tl_hdhr_playback_manager_dispose(GObject *object)
 {
-	TJHDHRPlaybackManager *self = TJ_HDHR_PLAYBACK_MANAGER(object);
+	TLHDHRPlaybackManager *self = TL_HDHR_PLAYBACK_MANAGER(object);
 
 	/* In dispose(), you are supposed to free all types referenced from this
 	 * object which might themselves hold a reference to self. Generally,
@@ -43,22 +43,22 @@ static void tj_hdhr_playback_manager_dispose(GObject *object)
 	 * the parent class implements the dispose() virtual function: it is
 	 * always guaranteed to do so
 	 */
-	tj_hdhr_playback_manager_stop_streaming(TJ_HDHR_PLAYBACK_MANAGER(object));
-	G_OBJECT_CLASS (tj_hdhr_playback_manager_parent_class)->dispose(object);
+	tl_hdhr_playback_manager_stop_streaming(TL_HDHR_PLAYBACK_MANAGER(object));
+	G_OBJECT_CLASS (tl_hdhr_playback_manager_parent_class)->dispose(object);
 }
 
-static void tj_hdhr_playback_manager_finalize(GObject *object)
+static void tl_hdhr_playback_manager_finalize(GObject *object)
 {
-	TJHDHRPlaybackManager *self = TJ_HDHR_PLAYBACK_MANAGER(object);
+	TLHDHRPlaybackManager *self = TL_HDHR_PLAYBACK_MANAGER(object);
 
 	/* Always chain up to the parent class; as with dispose(), finalize()
 	 * is guaranteed to exist on the parent's class virtual function table
 	 */
-	G_OBJECT_CLASS (tj_hdhr_playback_manager_parent_class)->finalize(object);
+	G_OBJECT_CLASS (tl_hdhr_playback_manager_parent_class)->finalize(object);
 }
 
 
-gboolean tj_hdhr_playback_manager_stream_channel_to_ip(TJHDHRPlaybackManager *self, guint32 frequency, guint32 program_id, uint32_t device_id, gchar *ip, guint port)
+gboolean tl_hdhr_playback_manager_stream_channel_to_ip(TLHDHRPlaybackManager *self, guint32 frequency, guint32 program_id, uint32_t device_id, gchar *ip, guint port)
 {
 	gboolean succeeded;
 	gchar *url;
@@ -70,9 +70,9 @@ gboolean tj_hdhr_playback_manager_stream_channel_to_ip(TJHDHRPlaybackManager *se
 
 	succeeded = FALSE;
 	if (self->priv->playback_device != NULL) {
-		tj_hdhr_playback_manager_stop_streaming(self);
+		tl_hdhr_playback_manager_stop_streaming(self);
 	}
-	self->priv->playback_device = tj_hdhr_manager_get_tuner(TJ_HDHR_MANAGER(self), device_id);
+	self->priv->playback_device = tl_hdhr_manager_get_tuner(TL_HDHR_MANAGER(self), device_id);
 	if (self->priv->playback_device == NULL) {
 		g_error("Could not acquire tuner.");
 	} else {
@@ -90,7 +90,7 @@ gboolean tj_hdhr_playback_manager_stream_channel_to_ip(TJHDHRPlaybackManager *se
 	return succeeded;
 }
 
-void tj_hdhr_playback_manager_stop_streaming(TJHDHRPlaybackManager *self)
+void tl_hdhr_playback_manager_stop_streaming(TLHDHRPlaybackManager *self)
 {
 	g_assert(self != NULL);
 

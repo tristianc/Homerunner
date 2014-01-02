@@ -4,29 +4,29 @@
 #include <libxml/xmlwriter.h>
 #define LIBXML_SCHEMAS_ENABLED
 #include <libxml/xmlschemastypes.h>
-#include "tj_hdhr_channel_manager.h"
-#include "tj_model_enums.h"
+#include "tl_hdhr_channel_manager.h"
+#include "tl_model_enums.h"
 
 #define ENCODING "UTF-8"
 
-G_DEFINE_TYPE(TJHDHRChannelManager, tj_hdhr_channel_manager, TJ_TYPE_HDHR_MANAGER);
+G_DEFINE_TYPE(TLHDHRChannelManager, tl_hdhr_channel_manager, TL_TYPE_HDHR_MANAGER);
 
-static void tj_hdhr_channel_manager_class_init(TJHDHRChannelManagerClass *k)
+static void tl_hdhr_channel_manager_class_init(TLHDHRChannelManagerClass *k)
 {
 }
 
-static void tj_hdhr_channel_manager_init(TJHDHRChannelManager *self)
+static void tl_hdhr_channel_manager_init(TLHDHRChannelManager *self)
 {
 }
 
-TJHDHRChannelManager *tj_hdhr_channel_manager_new()
+TLHDHRChannelManager *tl_hdhr_channel_manager_new()
 {
-	return g_object_new(TJ_TYPE_HDHR_CHANNEL_MANAGER, NULL);
+	return g_object_new(TL_TYPE_HDHR_CHANNEL_MANAGER, NULL);
 }
 
-static void tj_hdhr_channel_manager_dispose(GObject *object)
+static void tl_hdhr_channel_manager_dispose(GObject *object)
 {
-	TJHDHRChannelManager *self = TJ_HDHR_CHANNEL_MANAGER(object);
+	TLHDHRChannelManager *self = TL_HDHR_CHANNEL_MANAGER(object);
 
 	/* In dispose(), you are supposed to free all types referenced from this
 	 * object which might themselves hold a reference to self. Generally,
@@ -43,44 +43,44 @@ static void tj_hdhr_channel_manager_dispose(GObject *object)
 	 * the parent class implements the dispose() virtual function: it is
 	 * always guaranteed to do so
 	 */
-	G_OBJECT_CLASS (tj_hdhr_channel_manager_parent_class)->dispose(object);
+	G_OBJECT_CLASS (tl_hdhr_channel_manager_parent_class)->dispose(object);
 }
 
-static void tj_hdhr_channel_manager_finalize(GObject *object)
+static void tl_hdhr_channel_manager_finalize(GObject *object)
 {
-	TJHDHRChannelManager *self = TJ_HDHR_CHANNEL_MANAGER(object);
+	TLHDHRChannelManager *self = TL_HDHR_CHANNEL_MANAGER(object);
 
 	/* Always chain up to the parent class; as with dispose(), finalize()
 	 * is guaranteed to exist on the parent's class virtual function table
 	 */
-	G_OBJECT_CLASS (tj_hdhr_channel_manager_parent_class)->finalize(object);
+	G_OBJECT_CLASS (tl_hdhr_channel_manager_parent_class)->finalize(object);
 }
 
-GtkListStore *tj_hdhr_channel_manager_test_scan_channels(TJHDHRChannelManager *self)
+GtkListStore *tl_hdhr_channel_manager_test_scan_channels(TLHDHRChannelManager *self)
 {
 	GtkListStore *test_channel_store;
 	GtkTreeIter channel_iter;
 
 	g_assert(self != NULL);
-	test_channel_store = gtk_list_store_new(TJ_CHANNEL_MODEL_N_COLUMNS,
+	test_channel_store = gtk_list_store_new(TL_CHANNEL_MODEL_N_COLUMNS,
 			G_TYPE_STRING,
 			G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT);
 	gtk_list_store_insert_with_values(test_channel_store, &channel_iter, -1,
-			TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, "88.1",
-			TJ_CHANNEL_MODEL_STATION_COLUMN, "TristinTV",
-			TJ_CHANNEL_MODEL_FREQ_COLUMN, 0000,
-			TJ_CHANNEL_MODEL_PROGRAM_ID_COLUMN, 1111,
+			TL_CHANNEL_MODEL_VCHANNEL_COLUMN, "88.1",
+			TL_CHANNEL_MODEL_STATION_COLUMN, "TristinTV",
+			TL_CHANNEL_MODEL_FREQ_COLUMN, 0000,
+			TL_CHANNEL_MODEL_PROGRAM_ID_COLUMN, 1111,
 			-1);
 	gtk_list_store_insert_with_values(test_channel_store, &channel_iter, -1,
-			TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, "92",
-			TJ_CHANNEL_MODEL_STATION_COLUMN, "OniTV",
-			TJ_CHANNEL_MODEL_FREQ_COLUMN, 0001,
-			TJ_CHANNEL_MODEL_PROGRAM_ID_COLUMN, 2222,
+			TL_CHANNEL_MODEL_VCHANNEL_COLUMN, "92",
+			TL_CHANNEL_MODEL_STATION_COLUMN, "OniTV",
+			TL_CHANNEL_MODEL_FREQ_COLUMN, 0001,
+			TL_CHANNEL_MODEL_PROGRAM_ID_COLUMN, 2222,
 			-1);
 	return test_channel_store;
 }
 
-static void tj_hdhr_channel_manager_get_lineup(TJHDHRChannelManager *self, uint32_t device_id)
+static void tl_hdhr_channel_manager_get_lineup(TLHDHRChannelManager *self, uint32_t device_id)
 {
 	/* ToDo:
 	 * Attempt to get lineup from device
@@ -89,7 +89,7 @@ static void tj_hdhr_channel_manager_get_lineup(TJHDHRChannelManager *self, uint3
 	 */
 }
 
-GtkListStore *tj_hdhr_channel_manager_scan_channels(TJHDHRChannelManager *self, uint32_t device_id)
+GtkListStore *tl_hdhr_channel_manager_scan_channels(TLHDHRChannelManager *self, uint32_t device_id)
 {
 	guint i;
 	guint j;
@@ -103,10 +103,10 @@ GtkListStore *tj_hdhr_channel_manager_scan_channels(TJHDHRChannelManager *self, 
 	int ret;
 
 	g_assert(self != NULL);
-	channel_store = gtk_list_store_new(TJ_CHANNEL_MODEL_N_COLUMNS, G_TYPE_STRING,
+	channel_store = gtk_list_store_new(TL_CHANNEL_MODEL_N_COLUMNS, G_TYPE_STRING,
 	G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT);
 
-	scanner_device = tj_hdhr_manager_get_tuner(TJ_HDHR_MANAGER(self), device_id);
+	scanner_device = tl_hdhr_manager_get_tuner(TL_HDHR_MANAGER(self), device_id);
 
 	if (scanner_device == NULL)
 	{
@@ -164,10 +164,10 @@ GtkListStore *tj_hdhr_channel_manager_scan_channels(TJHDHRChannelManager *self, 
 
 				gtk_list_store_insert_with_values(channel_store, &channel_iter,
 						-1,
-						TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, virtual_channel,
-						TJ_CHANNEL_MODEL_STATION_COLUMN, result.programs[k].name,
-						TJ_CHANNEL_MODEL_FREQ_COLUMN, result.frequency,
-						TJ_CHANNEL_MODEL_PROGRAM_ID_COLUMN, result.programs[k].program_number,
+						TL_CHANNEL_MODEL_VCHANNEL_COLUMN, virtual_channel,
+						TL_CHANNEL_MODEL_STATION_COLUMN, result.programs[k].name,
+						TL_CHANNEL_MODEL_FREQ_COLUMN, result.frequency,
+						TL_CHANNEL_MODEL_PROGRAM_ID_COLUMN, result.programs[k].program_number,
 						-1);
 				g_debug("NAME %s", result.programs[k].name);
 				g_debug("PROGRAM %s", result.programs[k].program_str);
@@ -186,7 +186,7 @@ GtkListStore *tj_hdhr_channel_manager_scan_channels(TJHDHRChannelManager *self, 
 	return channel_store;
 }
 
-static void tj_hdhr_channel_manager_add_channel_to_xml(TJHDHRChannelManager *self,
+static void tl_hdhr_channel_manager_add_channel_to_xml(TLHDHRChannelManager *self,
 		xmlNodePtr parent, gchar *vchannel, gchar *station, guint32 frequency,
 		guint32 program_id)
 {
@@ -260,7 +260,7 @@ cleanup:
 	g_free(pid_content);
 }
 
-void tj_hdhr_channel_manager_save_channels_to_xml_file(TJHDHRChannelManager *self,
+void tl_hdhr_channel_manager_save_channels_to_xml_file(TLHDHRChannelManager *self,
 		GtkListStore *channel_store, gchar *path, gchar *schema_path, uint32_t device_id)
 {
 	int rc;
@@ -297,7 +297,7 @@ void tj_hdhr_channel_manager_save_channels_to_xml_file(TJHDHRChannelManager *sel
 		g_debug("Could not create new XML device node");
 		goto cleanup;
 	}
-	namespace = xmlNewNs(device_node, BAD_CAST TJ_HDHR_CHANNEL_MANAGER_XML_NAMESPACE,
+	namespace = xmlNewNs(device_node, BAD_CAST TL_HDHR_CHANNEL_MANAGER_XML_NAMESPACE,
 			NULL);
 	if (namespace == NULL) {
 		g_debug("Could not write namespace to device node");
@@ -324,13 +324,13 @@ void tj_hdhr_channel_manager_save_channels_to_xml_file(TJHDHRChannelManager *sel
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(channel_store), &iter);
 	while (valid) {
 		gtk_tree_model_get(GTK_TREE_MODEL(channel_store), &iter,
-				TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, &vchannel,
-				TJ_CHANNEL_MODEL_STATION_COLUMN, &station,
-				TJ_CHANNEL_MODEL_FREQ_COLUMN, &frequency,
-				TJ_CHANNEL_MODEL_PROGRAM_ID_COLUMN, &program_id,
+				TL_CHANNEL_MODEL_VCHANNEL_COLUMN, &vchannel,
+				TL_CHANNEL_MODEL_STATION_COLUMN, &station,
+				TL_CHANNEL_MODEL_FREQ_COLUMN, &frequency,
+				TL_CHANNEL_MODEL_PROGRAM_ID_COLUMN, &program_id,
 				-1);
 
-		tj_hdhr_channel_manager_add_channel_to_xml(self, channels_node, vchannel,
+		tl_hdhr_channel_manager_add_channel_to_xml(self, channels_node, vchannel,
 				station, frequency, program_id);
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(channel_store), &iter);
 		g_free(vchannel);
@@ -343,7 +343,7 @@ cleanup:
 	xmlCleanupParser();
 }
 
-static void tj_hdhr_parse_channel_from_xml_file(TJHDHRChannelManager *self,
+static void tl_hdhr_parse_channel_from_xml_file(TLHDHRChannelManager *self,
 		xmlNodePtr channels, GtkListStore *channel_store)
 {
 	xmlNodePtr child;
@@ -385,10 +385,10 @@ static void tj_hdhr_parse_channel_from_xml_file(TJHDHRChannelManager *self,
 				}
 			}
 			gtk_list_store_insert_with_values(channel_store, &channel_iter, -1,
-					TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, vchannel,
-					TJ_CHANNEL_MODEL_STATION_COLUMN, station,
-					TJ_CHANNEL_MODEL_FREQ_COLUMN, frequency,
-					TJ_CHANNEL_MODEL_PROGRAM_ID_COLUMN, program_id,
+					TL_CHANNEL_MODEL_VCHANNEL_COLUMN, vchannel,
+					TL_CHANNEL_MODEL_STATION_COLUMN, station,
+					TL_CHANNEL_MODEL_FREQ_COLUMN, frequency,
+					TL_CHANNEL_MODEL_PROGRAM_ID_COLUMN, program_id,
 					-1);
 			g_free(vchannel);
 			g_free(station);
@@ -396,7 +396,7 @@ static void tj_hdhr_parse_channel_from_xml_file(TJHDHRChannelManager *self,
 	}
 }
 
-static void tj_hdhr_channel_manager_parse_channels_from_xml_file(TJHDHRChannelManager *self,
+static void tl_hdhr_channel_manager_parse_channels_from_xml_file(TLHDHRChannelManager *self,
 		xmlDocPtr doc, GtkListStore *channel_store)
 {
 	xmlNodePtr current;
@@ -423,7 +423,7 @@ static void tj_hdhr_channel_manager_parse_channels_from_xml_file(TJHDHRChannelMa
 			for (child = current->children; child != NULL; child =
 					child->next) {
 				if (xmlStrcmp(child->name, BAD_CAST "channels") == 0) {
-					tj_hdhr_parse_channel_from_xml_file(self, child,
+					tl_hdhr_parse_channel_from_xml_file(self, child,
 							channel_store);
 				}
 			}
@@ -432,7 +432,7 @@ static void tj_hdhr_channel_manager_parse_channels_from_xml_file(TJHDHRChannelMa
 	}
 }
 
-GtkListStore *tj_hdhr_channel_manager_load_channels_from_xml_file(TJHDHRChannelManager *self, gchar *path,
+GtkListStore *tl_hdhr_channel_manager_load_channels_from_xml_file(TLHDHRChannelManager *self, gchar *path,
 		gchar *schema_path)
 {
 	GtkListStore *channel_store;
@@ -499,9 +499,9 @@ GtkListStore *tj_hdhr_channel_manager_load_channels_from_xml_file(TJHDHRChannelM
 		goto cleanup;
 	}
 
-	channel_store = gtk_list_store_new(TJ_CHANNEL_MODEL_N_COLUMNS, G_TYPE_STRING,
+	channel_store = gtk_list_store_new(TL_CHANNEL_MODEL_N_COLUMNS, G_TYPE_STRING,
 			G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT);
-	tj_hdhr_channel_manager_parse_channels_from_xml_file(self, doc, channel_store);
+	tl_hdhr_channel_manager_parse_channels_from_xml_file(self, doc, channel_store);
 
 cleanup:
 	xmlSchemaFreeParserCtxt(parse_context);

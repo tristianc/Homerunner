@@ -1,6 +1,6 @@
-#include "tj_channel_list.h"
+#include "tl_channel_list.h"
 #include "marshaller.h"
-#include "tj_model_enums.h"
+#include "tl_model_enums.h"
 
 enum
 {
@@ -15,9 +15,9 @@ enum
 	LAST_SIGNAL
 };
 
-static guint tj_channel_list_signals[LAST_SIGNAL];
+static guint tl_channel_list_signals[LAST_SIGNAL];
 
-struct _TJChannelListPrivate
+struct _TLChannelListPrivate
 {
 	GtkWidget *box1;
 	GtkWidget *combobox1;
@@ -26,10 +26,10 @@ struct _TJChannelListPrivate
 	gint changed_handler_id;
 };
 
-G_DEFINE_TYPE_WITH_PRIVATE(TJChannelList, tj_channel_list, GTK_TYPE_BOX);
+G_DEFINE_TYPE_WITH_PRIVATE(TLChannelList, tl_channel_list, GTK_TYPE_BOX);
 
 
-static void on_combobox_changed(GtkComboBox *box, TJChannelList *user_data)
+static void on_combobox_changed(GtkComboBox *box, TLChannelList *user_data)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -42,12 +42,12 @@ static void on_combobox_changed(GtkComboBox *box, TJChannelList *user_data)
 	gtk_combo_box_get_active_iter(box, &iter);
 	model = gtk_combo_box_get_model(box);
 	if (model != NULL) {
-		gtk_tree_model_get(model, &iter, TJ_DEVICE_MODEL_DEV_ID_COLUMN, &id, -1);
+		gtk_tree_model_get(model, &iter, TL_DEVICE_MODEL_DEV_ID_COLUMN, &id, -1);
 	}
-	g_signal_emit(user_data, tj_channel_list_signals[SET_DEVICE], 0, id);
+	g_signal_emit(user_data, tl_channel_list_signals[SET_DEVICE], 0, id);
 }
 
-static void on_row_activated(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, TJChannelList *user_data)
+static void on_row_activated(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, TLChannelList *user_data)
 {
         guint32 frequency;
         guint program_id;
@@ -61,9 +61,9 @@ static void on_row_activated(GtkTreeView *view, GtkTreePath *path, GtkTreeViewCo
         model = gtk_tree_view_get_model(view);
         if (model != NULL) {
         	gtk_tree_model_get_iter(model, &iter, path);
-        	gtk_tree_model_get(model, &iter, TJ_CHANNEL_MODEL_FREQ_COLUMN, &frequency, TJ_CHANNEL_MODEL_PROGRAM_ID_COLUMN, &program_id, -1);
+        	gtk_tree_model_get(model, &iter, TL_CHANNEL_MODEL_FREQ_COLUMN, &frequency, TL_CHANNEL_MODEL_PROGRAM_ID_COLUMN, &program_id, -1);
         	g_debug("Received frequency %d and program id %d", frequency, program_id);
-        	g_signal_emit(user_data, tj_channel_list_signals[PLAY_CHANNEL], 0, frequency, program_id);
+        	g_signal_emit(user_data, tl_channel_list_signals[PLAY_CHANNEL], 0, frequency, program_id);
         }
 }
 
@@ -76,12 +76,12 @@ static void default_device_renderer(GtkTreeViewColumn *column, GtkCellRenderer *
 	g_assert(model != NULL);
 	g_assert(iter != NULL);
 
-	gtk_tree_model_get(model, iter, TJ_DEVICE_MODEL_NAME_COLUMN, &value, -1);
+	gtk_tree_model_get(model, iter, TL_DEVICE_MODEL_NAME_COLUMN, &value, -1);
 	g_object_set(renderer, "text", value, NULL);
 	g_free(value);
 }
 
-static void tj_channel_list_add_columns(TJChannelList *self)
+static void tl_channel_list_add_columns(TLChannelList *self)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *channel_column;
@@ -101,12 +101,12 @@ static void tj_channel_list_add_columns(TJChannelList *self)
 		station_column);
 
 	column = gtk_tree_view_get_column(GTK_TREE_VIEW(self->priv->treeview1), CHANNEL_COLUMN);
-	gtk_tree_view_column_set_sort_column_id(column, TJ_CHANNEL_MODEL_VCHANNEL_COLUMN);
+	gtk_tree_view_column_set_sort_column_id(column, TL_CHANNEL_MODEL_VCHANNEL_COLUMN);
 	column = gtk_tree_view_get_column(GTK_TREE_VIEW(self->priv->treeview1), STATION_COLUMN);
-	gtk_tree_view_column_set_sort_column_id(column, TJ_CHANNEL_MODEL_STATION_COLUMN);
+	gtk_tree_view_column_set_sort_column_id(column, TL_CHANNEL_MODEL_STATION_COLUMN);
 }
 
-static gint tj_channel_list_sort_channel_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer user_data)
+static gint tl_channel_list_sort_channel_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer user_data)
 {
 	gint ret = 0;
 	gchar *left_channel;
@@ -116,8 +116,8 @@ static gint tj_channel_list_sort_channel_func(GtkTreeModel *model, GtkTreeIter *
 	int result;
 
 	result = 0;
-	gtk_tree_model_get(model, a, TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, &left_channel, -1);
-	gtk_tree_model_get(model, b, TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, &right_channel, -1);
+	gtk_tree_model_get(model, a, TL_CHANNEL_MODEL_VCHANNEL_COLUMN, &left_channel, -1);
+	gtk_tree_model_get(model, b, TL_CHANNEL_MODEL_VCHANNEL_COLUMN, &right_channel, -1);
 	if (left_channel == NULL || right_channel == NULL) {
 		if (left_channel == NULL && right_channel == NULL) {
 			result = 0;
@@ -137,26 +137,26 @@ static gint tj_channel_list_sort_channel_func(GtkTreeModel *model, GtkTreeIter *
 	return result;
 }
 
-static void tj_channel_list_class_init(TJChannelListClass *k)
+static void tl_channel_list_class_init(TLChannelListClass *k)
 {
 	GtkWidgetClass *widget_class;
 
 	widget_class = GTK_WIDGET_CLASS(k);
 	gtk_widget_class_set_template_from_resource(widget_class,
-		"/org/titaniclistener/homerunner/tj_channel_list.ui");
-	gtk_widget_class_bind_template_child_private(widget_class, TJChannelList,
+		"/org/titaniclistener/homerunner/tl_channel_list.ui");
+	gtk_widget_class_bind_template_child_private(widget_class, TLChannelList,
 		box1);
-	gtk_widget_class_bind_template_child_private(widget_class, TJChannelList,
+	gtk_widget_class_bind_template_child_private(widget_class, TLChannelList,
 		combobox1);
-	gtk_widget_class_bind_template_child_private(widget_class, TJChannelList,
+	gtk_widget_class_bind_template_child_private(widget_class, TLChannelList,
 		scrolledwindow1);
-	gtk_widget_class_bind_template_child_private(widget_class, TJChannelList,
+	gtk_widget_class_bind_template_child_private(widget_class, TLChannelList,
 		treeview1);
 
-	tj_channel_list_signals[PLAY_CHANNEL] = g_signal_new("play-channel",
+	tl_channel_list_signals[PLAY_CHANNEL] = g_signal_new("play-channel",
 		G_TYPE_FROM_CLASS(k),
 		G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-		G_STRUCT_OFFSET (TJChannelListClass, play_channel),
+		G_STRUCT_OFFSET (TLChannelListClass, play_channel),
 		NULL,
 		NULL,
 		g_cclosure_user_marshal_VOID__UINT_UINT,
@@ -165,10 +165,10 @@ static void tj_channel_list_class_init(TJChannelListClass *k)
 		G_TYPE_UINT,
 		G_TYPE_UINT);
 
-	tj_channel_list_signals[SET_DEVICE] = g_signal_new("set-device",
+	tl_channel_list_signals[SET_DEVICE] = g_signal_new("set-device",
 		G_TYPE_FROM_CLASS(k),
 		G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-		G_STRUCT_OFFSET (TJChannelListClass, set_device),
+		G_STRUCT_OFFSET (TLChannelListClass, set_device),
 		NULL,
 		NULL,
 		g_cclosure_marshal_VOID__INT,
@@ -177,15 +177,15 @@ static void tj_channel_list_class_init(TJChannelListClass *k)
 		G_TYPE_UINT);
 }
 
-static void tj_channel_list_init(TJChannelList *self)
+static void tl_channel_list_init(TLChannelList *self)
 {
 	GtkCellRenderer *device_renderer;
 
 	g_assert(self != NULL);
 
-	self->priv = tj_channel_list_get_instance_private(self);
+	self->priv = tl_channel_list_get_instance_private(self);
 	gtk_widget_init_template(GTK_WIDGET(self));
-	tj_channel_list_add_columns(self);
+	tl_channel_list_add_columns(self);
 	g_signal_connect(self->priv->treeview1, "row-activated",
 			G_CALLBACK (on_row_activated), self);
 
@@ -199,23 +199,23 @@ static void tj_channel_list_init(TJChannelList *self)
 			G_CALLBACK(on_combobox_changed), self);
 }
 
-GtkWidget *tj_channel_list_new()
+GtkWidget *tl_channel_list_new()
 {
-	return g_object_new(TJ_TYPE_CHANNEL_LIST, NULL);
+	return g_object_new(TL_TYPE_CHANNEL_LIST, NULL);
 }
 
-void tj_channel_list_set_channel_model(TJChannelList *self, GtkListStore *channel_model)
+void tl_channel_list_set_channel_model(TLChannelList *self, GtkListStore *channel_model)
 {
 	g_assert(self != NULL);
 	g_assert(channel_model != NULL);
 
 	gtk_tree_view_set_model(GTK_TREE_VIEW(self->priv->treeview1),
 		GTK_TREE_MODEL(channel_model));
-	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(channel_model), TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, tj_channel_list_sort_channel_func, NULL, NULL);
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(channel_model), TJ_CHANNEL_MODEL_VCHANNEL_COLUMN, GTK_SORT_ASCENDING);
+	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(channel_model), TL_CHANNEL_MODEL_VCHANNEL_COLUMN, tl_channel_list_sort_channel_func, NULL, NULL);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(channel_model), TL_CHANNEL_MODEL_VCHANNEL_COLUMN, GTK_SORT_ASCENDING);
 }
 
-GtkListStore *tj_channel_list_get_channel_model(TJChannelList *self)
+GtkListStore *tl_channel_list_get_channel_model(TLChannelList *self)
 {
         GtkTreeModel *channel_model;
 
@@ -226,7 +226,7 @@ GtkListStore *tj_channel_list_get_channel_model(TJChannelList *self)
         return GTK_LIST_STORE(channel_model);
 }
 
-void tj_channel_list_set_device_model(TJChannelList *self, GtkListStore *device_model)
+void tl_channel_list_set_device_model(TLChannelList *self, GtkListStore *device_model)
 {
 	g_assert(self != NULL);
 	g_assert(device_model != NULL);
@@ -234,7 +234,7 @@ void tj_channel_list_set_device_model(TJChannelList *self, GtkListStore *device_
 	gtk_combo_box_set_model(GTK_COMBO_BOX(self->priv->combobox1), GTK_TREE_MODEL(device_model));
 }
 
-GtkListStore *tj_channel_list_get_device_model(TJChannelList *self)
+GtkListStore *tl_channel_list_get_device_model(TLChannelList *self)
 {
         GtkTreeModel *device_model;
 
