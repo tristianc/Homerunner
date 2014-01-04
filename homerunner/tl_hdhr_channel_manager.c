@@ -101,16 +101,6 @@ tl_hdhr_channel_manager_test_scan_channels(TLHDHRChannelManager *self)
 	return test_channel_store;
 }
 
-static void
-tl_hdhr_channel_manager_get_lineup(TLHDHRChannelManager *self, uint32_t device_id)
-{
-	/* ToDo:
-	 * Attempt to get lineup from device
-	 * In scan_channels,
-	 * If virtual channel is present in lineup, save details to channel store
-	 */
-}
-
 GtkListStore *
 tl_hdhr_channel_manager_scan_channels(TLHDHRChannelManager *self, uint32_t device_id)
 {
@@ -259,7 +249,9 @@ tl_hdhr_channel_manager_add_channel_to_xml(TLHDHRChannelManager *self, xmlNodePt
 	}
 
 	g_debug("Finished constructing channel node");
-	cleanup: g_free(vchannel_content);
+
+cleanup:
+	g_free(vchannel_content);
 	g_free(station_content);
 	g_free(freq_content);
 	g_free(pid_content);
@@ -340,7 +332,8 @@ tl_hdhr_channel_manager_save_channels_to_xml_file(TLHDHRChannelManager *self,
 		g_free(station);
 	}
 
-	cleanup: xmlSaveFormatFileEnc(path, doc, ENCODING, 1);
+cleanup:
+	xmlSaveFormatFileEnc(path, doc, ENCODING, 1);
 	xmlFreeDoc(doc);
 	xmlCleanupParser();
 }
@@ -499,7 +492,8 @@ tl_hdhr_channel_manager_load_channels_from_xml_file(TLHDHRChannelManager *self, 
 	G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT);
 	tl_hdhr_channel_manager_parse_channels_from_xml_file(self, doc, channel_store);
 
-	cleanup: xmlSchemaFreeParserCtxt(parse_context);
+cleanup:
+	xmlSchemaFreeParserCtxt(parse_context);
 	xmlSchemaFreeValidCtxt(valid_context);
 	xmlSchemaCleanupTypes();
 	xmlFreeDoc(doc);
