@@ -1,0 +1,6 @@
+/homerunner.gresource.c
+/marshaller.c
+/marshaller.h
+/*.o
+/*.lo
+/*.la

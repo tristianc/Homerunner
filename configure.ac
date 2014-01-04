@@ -3,6 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
 AC_INIT(homerunner, 1.0)
 AC_PROG_CC([gcc clang])
+AC_CONFIG_HEADER([config.h])
 
 AC_CANONICAL_SYSTEM
 
@@ -24,7 +25,6 @@ PKG_CHECK_MODULES([GLIB], [glib-2.0 >= $GLIB_REQ])
 PKG_CHECK_MODULES([TOTEM], [totem >= $TOTEM_REQ])
 PKG_CHECK_MODULES([LIBPEAS], [libpeas-1.0 >= $LIBPEAS_REQ])
 PKG_CHECK_MODULES([LIBXML2], [libxml-2.0 >= $LIBXML2_REQ])
-PKG_CHECK_MODULES([CLUTTERGTK], [clutter-gtk-1.0 >= $CLUTTERGTK_REQ])
 
 # Get HDHomerun library and include locations
 # Learned from http://www.openismus.com/documents/linux/using_libraries/using_libraries.shtml
@@ -61,6 +61,5 @@ dnl Libtool is used for building share libraries
 AC_PROG_LIBTOOL
 
 AC_CONFIG_FILES(Makefile
-                homerunner/Makefile
-                include/Makefile)
+                homerunner/Makefile)
 AC_OUTPUT

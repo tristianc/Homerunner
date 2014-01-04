@@ -1,3 +1,35 @@
+# Eclipse
 .settings
 .cproject
 .project
+
+# Autotools
+
+# Autotools
+.deps
+.libs
+
+/aclocal.m4
+/autom4te.cache
+/stamp-h1
+/autoscan.log
+/libtool
+
+compile
+config.guess
+config.sub
+depcomp
+install-sh
+ltmain.sh
+missing
+/config
+
+config.h
+config.h.in
+config.log
+config.status
+configure.scan
+configure
+
+Makefile
+Makefile.in

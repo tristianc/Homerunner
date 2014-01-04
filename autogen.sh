@@ -1,4 +1,5 @@
 touch NEWS README AUTHORS ChangeLog
+aclocal
 autoreconf --force --install
-./configure
-make
+autoheader
+automake --add-missing

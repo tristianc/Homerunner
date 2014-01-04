@@ -1,1 +1,1 @@
-SUBDIRS=homerunner include
+SUBDIRS=homerunner
