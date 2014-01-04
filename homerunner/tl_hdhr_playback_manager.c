@@ -1,23 +1,23 @@
 /****************************************************************************
-**
-** Copyright (C) 2013 Tristian Celestin
-** All rights reserved.
-** Contact: tristian.celestin@outlook.com
-**
-** This file is part of the Homerunner plugin.
-**
-** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** If you have questions regarding the use of this file, please contact
-** Tristian Celestin at tristian.celestin@outlook.com
-**
-****************************************************************************/
+ **
+ ** Copyright (C) 2013 Tristian Celestin
+ ** All rights reserved.
+ ** Contact: tristian.celestin@outlook.com
+ **
+ ** This file is part of the Homerunner plugin.
+ **
+ ** GNU Lesser General Public License Usage
+ ** This file may be used under the terms of the GNU Lesser
+ ** General Public License version 2.1 as published by the Free Software
+ ** Foundation and appearing in the file LICENSE.LGPL included in the
+ ** packaging of this file.  Please review the following information to
+ ** ensure the GNU Lesser General Public License version 2.1 requirements
+ ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+ **
+ ** If you have questions regarding the use of this file, please contact
+ ** Tristian Celestin at tristian.celestin@outlook.com
+ **
+ ****************************************************************************/
 
 #include "tl_hdhr_playback_manager.h"
 
@@ -28,23 +28,26 @@ struct _TLHDHRPlaybackManagerPrivate
 
 G_DEFINE_TYPE_WITH_PRIVATE(TLHDHRPlaybackManager, tl_hdhr_playback_manager, TL_TYPE_HDHR_MANAGER);
 
-
-static void tl_hdhr_playback_manager_class_init(TLHDHRPlaybackManagerClass *k)
+static void
+tl_hdhr_playback_manager_class_init(TLHDHRPlaybackManagerClass *k)
 {
 }
 
-static void tl_hdhr_playback_manager_init(TLHDHRPlaybackManager *self)
+static void
+tl_hdhr_playback_manager_init(TLHDHRPlaybackManager *self)
 {
 	self->priv = tl_hdhr_playback_manager_get_instance_private(self);
 	self->priv->playback_device = NULL;
 }
 
-TLHDHRPlaybackManager *tl_hdhr_playback_manager_new()
+TLHDHRPlaybackManager *
+tl_hdhr_playback_manager_new()
 {
 	return g_object_new(TL_TYPE_HDHR_PLAYBACK_MANAGER, NULL);
 }
 
-static void tl_hdhr_playback_manager_dispose(GObject *object)
+static void
+tl_hdhr_playback_manager_dispose(GObject *object)
 {
 	TLHDHRPlaybackManager *self = TL_HDHR_PLAYBACK_MANAGER(object);
 
@@ -67,7 +70,8 @@ static void tl_hdhr_playback_manager_dispose(GObject *object)
 	G_OBJECT_CLASS (tl_hdhr_playback_manager_parent_class)->dispose(object);
 }
 
-static void tl_hdhr_playback_manager_finalize(GObject *object)
+static void
+tl_hdhr_playback_manager_finalize(GObject *object)
 {
 	TLHDHRPlaybackManager *self = TL_HDHR_PLAYBACK_MANAGER(object);
 
@@ -77,8 +81,9 @@ static void tl_hdhr_playback_manager_finalize(GObject *object)
 	G_OBJECT_CLASS (tl_hdhr_playback_manager_parent_class)->finalize(object);
 }
 
-
-gboolean tl_hdhr_playback_manager_stream_channel_to_ip(TLHDHRPlaybackManager *self, guint32 frequency, guint32 program_id, uint32_t device_id, gchar *ip, guint port)
+gboolean
+tl_hdhr_playback_manager_stream_channel_to_ip(TLHDHRPlaybackManager *self, guint32 frequency,
+	guint32 program_id, uint32_t device_id, gchar *ip, guint port)
 {
 	gboolean succeeded;
 	gchar *url;
@@ -96,13 +101,14 @@ gboolean tl_hdhr_playback_manager_stream_channel_to_ip(TLHDHRPlaybackManager *se
 	if (self->priv->playback_device == NULL) {
 		g_error("Could not acquire tuner.");
 	} else {
-		g_debug("Streaming using device %X and tuner %d", device_id, hdhomerun_device_get_tuner(self->priv->playback_device));
+		g_debug("Streaming using device %X and tuner %d", device_id,
+			hdhomerun_device_get_tuner(self->priv->playback_device));
 		freq_str = g_strdup_printf("%d", frequency);
 		pid_str = g_strdup_printf("%d", program_id);
 		url = g_strdup_printf("udp://%s:%d", ip, port);
 		hdhomerun_device_set_tuner_channel(self->priv->playback_device, freq_str);
 		hdhomerun_device_set_tuner_program(self->priv->playback_device, pid_str);
-		succeeded = (gboolean)hdhomerun_device_set_tuner_target(self->priv->playback_device, url);
+		succeeded = (gboolean) hdhomerun_device_set_tuner_target(self->priv->playback_device, url);
 		g_free(freq_str);
 		g_free(pid_str);
 	}
@@ -110,7 +116,8 @@ gboolean tl_hdhr_playback_manager_stream_channel_to_ip(TLHDHRPlaybackManager *se
 	return succeeded;
 }
 
-void tl_hdhr_playback_manager_stop_streaming(TLHDHRPlaybackManager *self)
+void
+tl_hdhr_playback_manager_stop_streaming(TLHDHRPlaybackManager *self)
 {
 	g_assert(self != NULL);
 

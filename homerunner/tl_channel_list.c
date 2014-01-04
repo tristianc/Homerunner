@@ -1,23 +1,23 @@
 /****************************************************************************
-**
-** Copyright (C) 2013 Tristian Celestin
-** All rights reserved.
-** Contact: tristian.celestin@outlook.com
-**
-** This file is part of the Homerunner plugin.
-**
-** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** If you have questions regarding the use of this file, please contact
-** Tristian Celestin at tristian.celestin@outlook.com
-**
-****************************************************************************/
+ **
+ ** Copyright (C) 2013 Tristian Celestin
+ ** All rights reserved.
+ ** Contact: tristian.celestin@outlook.com
+ **
+ ** This file is part of the Homerunner plugin.
+ **
+ ** GNU Lesser General Public License Usage
+ ** This file may be used under the terms of the GNU Lesser
+ ** General Public License version 2.1 as published by the Free Software
+ ** Foundation and appearing in the file LICENSE.LGPL included in the
+ ** packaging of this file.  Please review the following information to
+ ** ensure the GNU Lesser General Public License version 2.1 requirements
+ ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+ **
+ ** If you have questions regarding the use of this file, please contact
+ ** Tristian Celestin at tristian.celestin@outlook.com
+ **
+ ****************************************************************************/
 
 #include "tl_channel_list.h"
 #include "marshaller.h"
@@ -49,8 +49,8 @@ struct _TLChannelListPrivate
 
 G_DEFINE_TYPE_WITH_PRIVATE(TLChannelList, tl_channel_list, GTK_TYPE_BOX);
 
-
-static void on_combobox_changed(GtkComboBox *box, TLChannelList *user_data)
+static void
+on_combobox_changed(GtkComboBox *box, TLChannelList *user_data)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -68,27 +68,32 @@ static void on_combobox_changed(GtkComboBox *box, TLChannelList *user_data)
 	g_signal_emit(user_data, tl_channel_list_signals[SET_DEVICE], 0, id);
 }
 
-static void on_row_activated(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, TLChannelList *user_data)
+static void
+on_row_activated(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column,
+	TLChannelList *user_data)
 {
-        guint32 frequency;
-        guint program_id;
-        GtkTreeModel *model;
-        GtkTreeIter iter;
+	guint32 frequency;
+	guint program_id;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
 
-        g_assert(view != NULL);
-        g_assert(path != NULL);
-        g_assert(user_data != NULL);
+	g_assert(view != NULL);
+	g_assert(path != NULL);
+	g_assert(user_data != NULL);
 
-        model = gtk_tree_view_get_model(view);
-        if (model != NULL) {
-        	gtk_tree_model_get_iter(model, &iter, path);
-        	gtk_tree_model_get(model, &iter, TL_CHANNEL_MODEL_FREQ_COLUMN, &frequency, TL_CHANNEL_MODEL_PROGRAM_ID_COLUMN, &program_id, -1);
-        	g_debug("Received frequency %d and program id %d", frequency, program_id);
-        	g_signal_emit(user_data, tl_channel_list_signals[PLAY_CHANNEL], 0, frequency, program_id);
-        }
+	model = gtk_tree_view_get_model(view);
+	if (model != NULL) {
+		gtk_tree_model_get_iter(model, &iter, path);
+		gtk_tree_model_get(model, &iter, TL_CHANNEL_MODEL_FREQ_COLUMN, &frequency,
+			TL_CHANNEL_MODEL_PROGRAM_ID_COLUMN, &program_id, -1);
+		g_debug("Received frequency %d and program id %d", frequency, program_id);
+		g_signal_emit(user_data, tl_channel_list_signals[PLAY_CHANNEL], 0, frequency, program_id);
+	}
 }
 
-static void default_device_renderer(GtkTreeViewColumn *column, GtkCellRenderer *renderer, GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
+static void
+default_device_renderer(GtkTreeViewColumn *column, GtkCellRenderer *renderer, GtkTreeModel *model,
+	GtkTreeIter *iter, gpointer data)
 {
 	gchar *value;
 
@@ -102,7 +107,8 @@ static void default_device_renderer(GtkTreeViewColumn *column, GtkCellRenderer *
 	g_free(value);
 }
 
-static void tl_channel_list_add_columns(TLChannelList *self)
+static void
+tl_channel_list_add_columns(TLChannelList *self)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *channel_column;
@@ -112,14 +118,12 @@ static void tl_channel_list_add_columns(TLChannelList *self)
 	g_assert(self != NULL);
 
 	renderer = gtk_cell_renderer_text_new();
-	channel_column = gtk_tree_view_column_new_with_attributes("Channel",
-		renderer, "text", CHANNEL_COLUMN, NULL);
-	station_column = gtk_tree_view_column_new_with_attributes("Station",
-		renderer, "text", STATION_COLUMN, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(self->priv->treeview1),
-		channel_column);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(self->priv->treeview1),
-		station_column);
+	channel_column = gtk_tree_view_column_new_with_attributes("Channel", renderer, "text",
+		CHANNEL_COLUMN, NULL);
+	station_column = gtk_tree_view_column_new_with_attributes("Station", renderer, "text",
+		STATION_COLUMN, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(self->priv->treeview1), channel_column);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(self->priv->treeview1), station_column);
 
 	column = gtk_tree_view_get_column(GTK_TREE_VIEW(self->priv->treeview1), CHANNEL_COLUMN);
 	gtk_tree_view_column_set_sort_column_id(column, TL_CHANNEL_MODEL_VCHANNEL_COLUMN);
@@ -127,7 +131,9 @@ static void tl_channel_list_add_columns(TLChannelList *self)
 	gtk_tree_view_column_set_sort_column_id(column, TL_CHANNEL_MODEL_STATION_COLUMN);
 }
 
-static gint tl_channel_list_sort_channel_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer user_data)
+static gint
+tl_channel_list_sort_channel_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b,
+	gpointer user_data)
 {
 	gint ret = 0;
 	gchar *left_channel;
@@ -142,12 +148,10 @@ static gint tl_channel_list_sort_channel_func(GtkTreeModel *model, GtkTreeIter *
 	if (left_channel == NULL || right_channel == NULL) {
 		if (left_channel == NULL && right_channel == NULL) {
 			result = 0;
-		}
-		else {
+		} else {
 			result = (left_channel == NULL) ? -1 : 1;
 		}
-	}
-	else {
+	} else {
 		left_val = atof(left_channel);
 		right_val = atof(right_channel);
 		result = left_val - right_val;
@@ -158,47 +162,39 @@ static gint tl_channel_list_sort_channel_func(GtkTreeModel *model, GtkTreeIter *
 	return result;
 }
 
-static void tl_channel_list_class_init(TLChannelListClass *k)
+static void
+tl_channel_list_class_init(TLChannelListClass *k)
 {
 	GtkWidgetClass *widget_class;
 
 	widget_class = GTK_WIDGET_CLASS(k);
 	gtk_widget_class_set_template_from_resource(widget_class,
 		"/org/titaniclistener/homerunner/tl_channel_list.ui");
-	gtk_widget_class_bind_template_child_private(widget_class, TLChannelList,
-		box1);
-	gtk_widget_class_bind_template_child_private(widget_class, TLChannelList,
-		combobox1);
-	gtk_widget_class_bind_template_child_private(widget_class, TLChannelList,
-		scrolledwindow1);
-	gtk_widget_class_bind_template_child_private(widget_class, TLChannelList,
-		treeview1);
+	gtk_widget_class_bind_template_child_private(widget_class, TLChannelList, box1);
+	gtk_widget_class_bind_template_child_private(widget_class, TLChannelList, combobox1);
+	gtk_widget_class_bind_template_child_private(widget_class, TLChannelList, scrolledwindow1);
+	gtk_widget_class_bind_template_child_private(widget_class, TLChannelList, treeview1);
 
-	tl_channel_list_signals[PLAY_CHANNEL] = g_signal_new("play-channel",
-		G_TYPE_FROM_CLASS(k),
+	tl_channel_list_signals[PLAY_CHANNEL] = g_signal_new("play-channel", G_TYPE_FROM_CLASS(k),
 		G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-		G_STRUCT_OFFSET (TLChannelListClass, play_channel),
+		G_STRUCT_OFFSET(TLChannelListClass, play_channel),
 		NULL,
-		NULL,
-		g_cclosure_user_marshal_VOID__UINT_UINT,
-		G_TYPE_NONE,
-		2,
+		NULL, g_cclosure_user_marshal_VOID__UINT_UINT,
+		G_TYPE_NONE, 2,
 		G_TYPE_UINT,
 		G_TYPE_UINT);
 
-	tl_channel_list_signals[SET_DEVICE] = g_signal_new("set-device",
-		G_TYPE_FROM_CLASS(k),
+	tl_channel_list_signals[SET_DEVICE] = g_signal_new("set-device", G_TYPE_FROM_CLASS(k),
 		G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-		G_STRUCT_OFFSET (TLChannelListClass, set_device),
+		G_STRUCT_OFFSET(TLChannelListClass, set_device),
 		NULL,
-		NULL,
-		g_cclosure_marshal_VOID__INT,
-		G_TYPE_NONE,
-		1,
+		NULL, g_cclosure_marshal_VOID__INT,
+		G_TYPE_NONE, 1,
 		G_TYPE_UINT);
 }
 
-static void tl_channel_list_init(TLChannelList *self)
+static void
+tl_channel_list_init(TLChannelList *self)
 {
 	GtkCellRenderer *device_renderer;
 
@@ -207,47 +203,49 @@ static void tl_channel_list_init(TLChannelList *self)
 	self->priv = tl_channel_list_get_instance_private(self);
 	gtk_widget_init_template(GTK_WIDGET(self));
 	tl_channel_list_add_columns(self);
-	g_signal_connect(self->priv->treeview1, "row-activated",
-			G_CALLBACK (on_row_activated), self);
+	g_signal_connect(self->priv->treeview1, "row-activated", G_CALLBACK (on_row_activated), self);
 
 	device_renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(self->priv->combobox1),
-			device_renderer, TRUE);
-	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(self->priv->combobox1),
-			device_renderer, (GtkCellLayoutDataFunc)default_device_renderer, NULL, NULL);
-	self->priv->changed_handler_id = g_signal_connect(
-			G_OBJECT(self->priv->combobox1), "changed",
-			G_CALLBACK(on_combobox_changed), self);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(self->priv->combobox1), device_renderer, TRUE);
+	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(self->priv->combobox1), device_renderer,
+		(GtkCellLayoutDataFunc) default_device_renderer, NULL, NULL);
+	self->priv->changed_handler_id = g_signal_connect(G_OBJECT(self->priv->combobox1), "changed",
+		G_CALLBACK(on_combobox_changed), self);
 }
 
-GtkWidget *tl_channel_list_new()
+GtkWidget *
+tl_channel_list_new()
 {
 	return g_object_new(TL_TYPE_CHANNEL_LIST, NULL);
 }
 
-void tl_channel_list_set_channel_model(TLChannelList *self, GtkListStore *channel_model)
+void
+tl_channel_list_set_channel_model(TLChannelList *self, GtkListStore *channel_model)
 {
 	g_assert(self != NULL);
 	g_assert(channel_model != NULL);
 
-	gtk_tree_view_set_model(GTK_TREE_VIEW(self->priv->treeview1),
-		GTK_TREE_MODEL(channel_model));
-	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(channel_model), TL_CHANNEL_MODEL_VCHANNEL_COLUMN, tl_channel_list_sort_channel_func, NULL, NULL);
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(channel_model), TL_CHANNEL_MODEL_VCHANNEL_COLUMN, GTK_SORT_ASCENDING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(self->priv->treeview1), GTK_TREE_MODEL(channel_model));
+	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(channel_model),
+		TL_CHANNEL_MODEL_VCHANNEL_COLUMN, tl_channel_list_sort_channel_func, NULL, NULL);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(channel_model),
+		TL_CHANNEL_MODEL_VCHANNEL_COLUMN, GTK_SORT_ASCENDING);
 }
 
-GtkListStore *tl_channel_list_get_channel_model(TLChannelList *self)
+GtkListStore *
+tl_channel_list_get_channel_model(TLChannelList *self)
 {
-        GtkTreeModel *channel_model;
+	GtkTreeModel *channel_model;
 
-        g_assert(self != NULL);
-        g_assert(channel_model != NULL);
+	g_assert(self != NULL);
+	g_assert(channel_model != NULL);
 
-        channel_model = gtk_tree_view_get_model(GTK_TREE_VIEW(self->priv->treeview1));
-        return GTK_LIST_STORE(channel_model);
+	channel_model = gtk_tree_view_get_model(GTK_TREE_VIEW(self->priv->treeview1));
+	return GTK_LIST_STORE(channel_model);
 }
 
-void tl_channel_list_set_device_model(TLChannelList *self, GtkListStore *device_model)
+void
+tl_channel_list_set_device_model(TLChannelList *self, GtkListStore *device_model)
 {
 	g_assert(self != NULL);
 	g_assert(device_model != NULL);
@@ -255,14 +253,15 @@ void tl_channel_list_set_device_model(TLChannelList *self, GtkListStore *device_
 	gtk_combo_box_set_model(GTK_COMBO_BOX(self->priv->combobox1), GTK_TREE_MODEL(device_model));
 }
 
-GtkListStore *tl_channel_list_get_device_model(TLChannelList *self)
+GtkListStore *
+tl_channel_list_get_device_model(TLChannelList *self)
 {
-        GtkTreeModel *device_model;
+	GtkTreeModel *device_model;
 
-        g_assert(self != NULL);
+	g_assert(self != NULL);
 
-        device_model = NULL;
-        device_model = gtk_combo_box_get_model(GTK_COMBO_BOX(self->priv->combobox1));
-        return GTK_LIST_STORE(device_model);
+	device_model = NULL;
+	device_model = gtk_combo_box_get_model(GTK_COMBO_BOX(self->priv->combobox1));
+	return GTK_LIST_STORE(device_model);
 }
 

@@ -1,23 +1,23 @@
 /****************************************************************************
-**
-** Copyright (C) 2013 Tristian Celestin
-** All rights reserved.
-** Contact: tristian.celestin@outlook.com
-**
-** This file is part of the Homerunner plugin.
-**
-** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** If you have questions regarding the use of this file, please contact
-** Tristian Celestin at tristian.celestin@outlook.com
-**
-****************************************************************************/
+ **
+ ** Copyright (C) 2013 Tristian Celestin
+ ** All rights reserved.
+ ** Contact: tristian.celestin@outlook.com
+ **
+ ** This file is part of the Homerunner plugin.
+ **
+ ** GNU Lesser General Public License Usage
+ ** This file may be used under the terms of the GNU Lesser
+ ** General Public License version 2.1 as published by the Free Software
+ ** Foundation and appearing in the file LICENSE.LGPL included in the
+ ** packaging of this file.  Please review the following information to
+ ** ensure the GNU Lesser General Public License version 2.1 requirements
+ ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+ **
+ ** If you have questions regarding the use of this file, please contact
+ ** Tristian Celestin at tristian.celestin@outlook.com
+ **
+ ****************************************************************************/
 
 #ifndef TL_CHANNEL_LIST_H
 #define TL_CHANNEL_LIST_H
@@ -54,15 +54,15 @@ struct _TLChannelListClass
 	GtkBoxClass parent_class;
 
 	/* signals */
-	void (* play_channel)(TLChannelList *self, guint frequency, guint program_id, gpointer user_data);
-	void (* set_device)(TLChannelList *self, guint32 device_id, gpointer user_data);
+	void (*play_channel)(TLChannelList *self, guint frequency, guint program_id, gpointer user_data);
+	void (*set_device)(TLChannelList *self, guint32 device_id, gpointer user_data);
 };
 
-GtkWidget *tl_channel_list_new();
+GtkWidget *	tl_channel_list_new();
 void tl_channel_list_set_channel_model(TLChannelList *self, GtkListStore *channel_store);
-GtkListStore *tl_channel_list_get_channel_model(TLChannelList *self);
+GtkListStore * tl_channel_list_get_channel_model(TLChannelList *self);
 void tl_channel_list_set_device_model(TLChannelList *self, GtkListStore *device_store);
-GtkListStore *tl_channel_list_get_device_model(TLChannelList *self);
+GtkListStore * tl_channel_list_get_device_model(TLChannelList *self);
 
 G_END_DECLS
 

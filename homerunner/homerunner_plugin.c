@@ -1,23 +1,23 @@
 /****************************************************************************
-**
-** Copyright (C) 2013 Tristian Celestin
-** All rights reserved.
-** Contact: tristian.celestin@outlook.com
-**
-** This file is part of the Homerunner plugin.
-**
-** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** If you have questions regarding the use of this file, please contact
-** Tristian Celestin at tristian.celestin@outlook.com
-**
-****************************************************************************/
+ **
+ ** Copyright (C) 2013 Tristian Celestin
+ ** All rights reserved.
+ ** Contact: tristian.celestin@outlook.com
+ **
+ ** This file is part of the Homerunner plugin.
+ **
+ ** GNU Lesser General Public License Usage
+ ** This file may be used under the terms of the GNU Lesser
+ ** General Public License version 2.1 as published by the Free Software
+ ** Foundation and appearing in the file LICENSE.LGPL included in the
+ ** packaging of this file.  Please review the following information to
+ ** ensure the GNU Lesser General Public License version 2.1 requirements
+ ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+ **
+ ** If you have questions regarding the use of this file, please contact
+ ** Tristian Celestin at tristian.celestin@outlook.com
+ **
+ ****************************************************************************/
 
 #include <glib.h>
 #include <glib-object.h>
@@ -32,8 +32,8 @@
 #define TOTEM_HOMERUNNER_PLUGIN(o)				(G_TYPE_CHECK_INSTANCE_CAST ((o), TOTEM_TYPE_HOMERUNNER_PLUGIN, TotemHomerunnerPlugin))
 #define TOTEM_HOMERUNNER_PLUGIN_CLASS(k)		(G_TYPE_CHECK_CLASS_CAST((k), TOTEM_TYPE_HOMERUNNER_PLUGIN, TotemHomerunnerPluginClass))
 #define TOTEM_IS_HOMERUNNER_PLUGIN(o)			(G_TYPE_CHECK_INSTANCE_TYPE ((o), TOTEM_TYPE_HOMERUNNER_PLUGIN))
-#define TOTEM_IS_HOMERUNNER_PLUGIN_CLASS(k)     (G_TYPE_CHECK_CLASS_TYPE ((k), TOTEM_TYPE_HOMERUNNER_PLUGIN))
-#define TOTEM_HOMERUNNER_PLUGIN_GET_CLASS(o)    (G_TYPE_INSTANCE_GET_CLASS ((o), TOTEM_TYPE_HOMERUNNER_PLUGIN, TotemHomerunnerPluginClass))
+#define TOTEM_IS_HOMERUNNER_PLUGIN_CLASS(k)		(G_TYPE_CHECK_CLASS_TYPE ((k), TOTEM_TYPE_HOMERUNNER_PLUGIN))
+#define TOTEM_HOMERUNNER_PLUGIN_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), TOTEM_TYPE_HOMERUNNER_PLUGIN, TotemHomerunnerPluginClass))
 
 typedef struct
 {
@@ -47,10 +47,10 @@ typedef struct
 	guint32 device_id;
 } TotemHomerunnerPluginPrivate;
 
-TOTEM_PLUGIN_REGISTER(TOTEM_TYPE_HOMERUNNER_PLUGIN, TotemHomerunnerPlugin,
-		totem_homerunner_plugin);
+TOTEM_PLUGIN_REGISTER(TOTEM_TYPE_HOMERUNNER_PLUGIN, TotemHomerunnerPlugin, totem_homerunner_plugin);
 
-static void on_set_device(TLChannelList *list, guint32 device_id, TotemHomerunnerPlugin *plugin)
+static void
+on_set_device(TLChannelList *list, guint32 device_id, TotemHomerunnerPlugin *plugin)
 {
 	gboolean success;
 	gchar *schema_path;
@@ -75,14 +75,16 @@ static void on_set_device(TLChannelList *list, guint32 device_id, TotemHomerunne
 	channel_is = g_file_read(channel_file, NULL, &error);
 	if (error != NULL) {
 		g_debug("Could not read channels for device: %s", error->message);
-		channel_store = tl_hdhr_channel_manager_scan_channels(plugin->priv->channel_manager, device_id);
-		tl_hdhr_channel_manager_save_channels_to_xml_file(plugin->priv->channel_manager, channel_store, abs_filename, schema_path, device_id);
+		channel_store = tl_hdhr_channel_manager_scan_channels(plugin->priv->channel_manager,
+			device_id);
+		tl_hdhr_channel_manager_save_channels_to_xml_file(plugin->priv->channel_manager,
+			channel_store, abs_filename, schema_path, device_id);
 		g_error_free(error);
 		error = NULL;
-	}
-	else {
+	} else {
 		g_object_unref(channel_is);
-		channel_store = tl_hdhr_channel_manager_load_channels_from_xml_file(plugin->priv->channel_manager, abs_filename, schema_path);
+		channel_store = tl_hdhr_channel_manager_load_channels_from_xml_file(
+			plugin->priv->channel_manager, abs_filename, schema_path);
 	}
 	tl_channel_list_set_channel_model(TL_CHANNEL_LIST(plugin->priv->channel_list), channel_store);
 	g_free(filename);
@@ -92,7 +94,9 @@ static void on_set_device(TLChannelList *list, guint32 device_id, TotemHomerunne
 	g_object_unref(channel_file);
 }
 
-static void on_play_channel(TLChannelList *list, guint frequency, guint program_id, TotemHomerunnerPlugin *plugin)
+static void
+on_play_channel(TLChannelList *list, guint frequency, guint program_id,
+	TotemHomerunnerPlugin *plugin)
 {
 	TotemObject *totem;
 	gchar *channel_url;
@@ -103,7 +107,8 @@ static void on_play_channel(TLChannelList *list, guint frequency, guint program_
 	g_assert(plugin != NULL);
 	g_assert(list != NULL);
 
-	ip = tl_hdhr_manager_get_host_ip_relative_to_device(TL_HDHR_MANAGER(plugin->priv->playback_manager), plugin->priv->device_id);
+	ip = tl_hdhr_manager_get_host_ip_relative_to_device(
+		TL_HDHR_MANAGER(plugin->priv->playback_manager), plugin->priv->device_id);
 	if (ip == NULL) {
 		g_debug("Could not get local IP address to stream to.");
 		return;
@@ -112,11 +117,13 @@ static void on_play_channel(TLChannelList *list, guint frequency, guint program_
 	totem = g_object_get_data(G_OBJECT(plugin), "object");
 	channel_url = g_strdup_printf("udp://%s:%d", ip, port);
 
-	g_debug("Running play-channel handler with frequency %d and program_id %d", frequency, program_id);
+	g_debug("Running play-channel handler with frequency %d and program_id %d", frequency,
+		program_id);
 
 	totem_object_add_to_playlist_and_play(totem, channel_url, "TV!");
 
-	succeeded = tl_hdhr_playback_manager_stream_channel_to_ip(plugin->priv->playback_manager, frequency, program_id, plugin->priv->device_id, ip, port);
+	succeeded = tl_hdhr_playback_manager_stream_channel_to_ip(plugin->priv->playback_manager,
+		frequency, program_id, plugin->priv->device_id, ip, port);
 	if (succeeded == FALSE) {
 		g_debug("Was not successful in streaming channel to %s", channel_url);
 	}
@@ -124,7 +131,8 @@ static void on_play_channel(TLChannelList *list, guint frequency, guint program_
 	g_free(ip);
 }
 
-static void verify_config_paths(TotemHomerunnerPlugin *self)
+static void
+verify_config_paths(TotemHomerunnerPlugin *self)
 {
 	const gchar *config_path;
 	GFile *plugin_config_dir;
@@ -135,7 +143,8 @@ static void verify_config_paths(TotemHomerunnerPlugin *self)
 
 	error = NULL;
 	config_path = g_get_user_config_dir();
-	self->priv->plugin_config_path = g_build_filename(config_path, "homerunner", NULL);
+	self->priv->plugin_config_path = g_build_filename(config_path, "homerunner",
+	NULL);
 	plugin_config_dir = g_file_new_for_path(self->priv->plugin_config_path);
 	g_file_make_directory(plugin_config_dir, NULL, &error);
 	if (error != NULL) {
@@ -161,7 +170,8 @@ static void verify_config_paths(TotemHomerunnerPlugin *self)
 	g_object_unref(channels_dir);
 }
 
-static void impl_activate(PeasActivatable *plugin)
+static void
+impl_activate(PeasActivatable *plugin)
 {
 	TotemHomerunnerPlugin *self;
 	TotemObject *totem;
@@ -178,13 +188,11 @@ static void impl_activate(PeasActivatable *plugin)
 	self->priv->playback_manager = tl_hdhr_playback_manager_new();
 	self->priv->device_id = -1;
 
-	self->priv->play_channel_handler_id = g_signal_connect(
-			G_OBJECT(self->priv->channel_list), "play_channel",
-			G_CALLBACK(on_play_channel), self);
+	self->priv->play_channel_handler_id = g_signal_connect(G_OBJECT(self->priv->channel_list),
+		"play_channel", G_CALLBACK(on_play_channel), self);
 
-	self->priv->play_channel_handler_id = g_signal_connect(
-			G_OBJECT(self->priv->channel_list), "set-device",
-			G_CALLBACK(on_set_device), self);
+	self->priv->play_channel_handler_id = g_signal_connect(G_OBJECT(self->priv->channel_list),
+		"set-device", G_CALLBACK(on_set_device), self);
 
 	verify_config_paths(self);
 	gtk_widget_show(self->priv->channel_list);
@@ -195,7 +203,8 @@ static void impl_activate(PeasActivatable *plugin)
 	g_free(path);
 }
 
-static void impl_deactivate(PeasActivatable *plugin)
+static void
+impl_deactivate(PeasActivatable *plugin)
 {
 	TotemHomerunnerPlugin *self;
 	TotemObject *totem;
